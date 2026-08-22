@@ -22,6 +22,10 @@
   .homesCount{font-size:15px;color:var(--muted);white-space:nowrap;}
   .homesCount span{color:var(--text);font-weight:700;font-size:18px;}
   .filters{display:flex;gap:10px;flex-wrap:wrap;}
+  .sorter{margin-left:auto;display:flex;align-items:center;gap:8px;}
+  .sorter label{font-size:13px;color:var(--muted);white-space:nowrap;}
+  .sorter select{background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:3px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:inherit;}
   .chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);
         padding:7px 14px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s;}
   .chip:hover{color:var(--text);}
@@ -84,6 +88,17 @@
       <button class="chip" data-town="Fletcher">Fletcher</button>
       <button class="chip" data-town="Arden">Arden</button>
       <button class="chip" data-town="Bent Creek">Bent Creek / S. Asheville</button>
+    </div>
+    <div class="sorter">
+      <label for="sortSel">Sort by</label>
+      <select id="sortSel">
+        <option value="price-desc" selected>Price: High to Low</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="beds-desc">Bedrooms: High to Low</option>
+        <option value="beds-asc">Bedrooms: Low to High</option>
+        <option value="sf-desc">Square Feet: High to Low</option>
+        <option value="sf-asc">Square Feet: Low to High</option>
+      </select>
     </div>
   </div>
 
@@ -203,6 +218,17 @@ const TOWN_COLOR = {
 };
 const markers = {};   // addr -> marker
 let activeFilter = "All";
+let activeSort = "price-desc";
+
+const SORTERS = {
+  "price-desc":(a,b)=>b.price-a.price,
+  "price-asc":(a,b)=>a.price-b.price,
+  "beds-desc":(a,b)=>b.bed-a.bed,
+  "beds-asc":(a,b)=>a.bed-b.bed,
+  "sf-desc":(a,b)=>b.sf-a.sf,
+  "sf-asc":(a,b)=>a.sf-b.sf,
+};
+function sortList(list){ list.sort(SORTERS[activeSort] || SORTERS["price-desc"]); }
 
 function popupHTML(h){
   return `<img class="lp-img" src="${h.img}" alt="${h.addr}">
@@ -242,6 +268,7 @@ function showMarkers(filter){
 
 function render(filter){
   const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
+  sortList(list);
   grid.innerHTML = "";
   statCount.textContent = list.length;
   // sync map markers to filter + color by town
@@ -289,7 +316,13 @@ document.getElementById("filters").addEventListener("click", e=>{
   if(!chip) return;
   document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
   chip.classList.add("active");
-  render(chip.dataset.town);
+  activeFilter = chip.dataset.town;
+  render(activeFilter);
+});
+
+document.getElementById("sortSel").addEventListener("change", e=>{
+  activeSort = e.target.value;
+  render(activeFilter);
 });
 
 render("All");
