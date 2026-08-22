@@ -70,7 +70,35 @@
   .lp-img{width:230px;height:130px;object-fit:cover;border-radius:6px;display:block;margin-bottom:8px;}
   .lp-price{font-weight:700;font-size:16px;}
   .lp-spec{color:var(--muted);font-size:12px;margin-top:2px;}
-  @media(max-width:1100px){ .layout{grid-template-columns:1fr;} #map{height:420px;height:60vh;position:sticky;top:20px;} .mapSide{position:static;} }
+  /* ---------- Listing modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(8,10,14,.66);backdrop-filter:blur(3px);
+          display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;
+          opacity:0;pointer-events:none;transition:opacity .18s;}
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .modal{background:var(--panel);border:1px solid var(--border);border-radius:8px;width:min(860px,100%);
+        max-height:calc(100vh - 60px);overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+  .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+             padding:22px 24px 16px;border-bottom:1px solid var(--border);}
+  .modal-title .addr{font-size:22px;font-weight:700;line-height:1.25;}
+  .modal-title .town{color:var(--accent);font-size:14px;margin-top:4px;}
+  .modal-close{background:none;border:none;color:var(--muted);font-size:26px;line-height:1;cursor:pointer;
+              padding:2px 6px;border-radius:3px;transition:.15s;}
+  .modal-close:hover{color:var(--text);background:var(--panel2);}
+  .modal-hero{position:relative;border-bottom:1px solid var(--border);}
+  .modal-hero img{width:100%;height:340px;object-fit:cover;display:block;}
+  .modal-hero .price{position:absolute;bottom:14px;left:16px;font-size:26px;}
+  .modal-hero .badge{position:absolute;top:14px;right:16px;}
+  .modal-body{padding:0 24px 10px;}
+  .modal-specs{display:flex;gap:24px;padding:18px 0;border-bottom:1px solid var(--border);}
+  .modal-specs .spec b{font-size:20px;color:var(--text);}
+  .modal-specs .spec{color:var(--muted);font-size:13px;}
+  .modal-mapsec{padding:18px 0 22px;}
+  .modal-mapsec h3{font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:10px;}
+  .modal-mapsec h3 b{color:var(--text);}
+  #modalMap{height:320px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);}
+  .modal-actions{display:flex;gap:10px;padding:0 24px 24px;}
+  .modal-actions .btn{flex:1;padding:12px 0;font-size:15px;border-radius:5px;}
+  @media(max-width:1100px){ .layout{grid-template-columns:1fr;} #map{height:420px;height:60vh;position:sticky;top:20px;} .mapSide{position:static;} .modal-hero img{height:240px;} }
   @media(max-width:520px){ h1{font-size:24px;} }
   </style>
 </head>
@@ -108,7 +136,7 @@
     </div>
     <aside class="mapSide">
       <div id="map"></div>
-      <div class="mapHint"><b>Click a card</b> to focus it on the map, or <b>click a marker</b> for listing details. Markers recolor by the active area filter.</div>
+      <div class="mapHint"><b>Click a card</b> to open its details and map location, or <b>click a marker</b> for a quick preview. Markers recolor by the active area filter.</div>
     </aside>
   </div>
 
@@ -119,6 +147,38 @@
        Each card links to the original listing page. Prices subject to change; verify with your agent
        before making an offer. This page is a locally-generated reference, not an official brokerage service.</p>
   </footer>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">
+        <div class="addr" id="mAddr"></div>
+        <div class="town" id="mTown"></div>
+      </div>
+      <button class="modal-close" id="mClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-hero">
+      <img id="mImg" alt="">
+      <span class="price" id="mPrice"></span>
+      <span class="badge" id="mBadge"></span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-specs">
+        <span class="spec"><b id="mBed"></b><br>Beds</span>
+        <span class="spec"><b id="mBath"></b><br>Baths</span>
+        <span class="spec"><b id="mSf"></b><br>SqFt</span>
+      </div>
+      <div class="modal-mapsec">
+        <h3>Location · <b id="mTown2"></b></h3>
+        <div id="modalMap"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <a class="btn btn-primary" id="mListing" href="#" target="_blank" rel="noopener">View Listing</a>
+      <a class="btn btn-ghost" id="mSource" href="#" target="_blank" rel="noopener">Source</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -497,6 +557,47 @@ function showMarkers(filter){
   }
 }
 
+/* ---------- Listing modal ---------- */
+const overlay = document.getElementById("overlay");
+function buildModalMap(){
+  const m = L.map("modalMap", {scrollWheelZoom:false});
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:18, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+  }).addTo(m);
+  return m;
+}
+let modalMap = null, modalMarker = null;
+function openModal(h){
+  document.getElementById("mImg").src = h.img;
+  document.getElementById("mImg").alt = h.addr + ", " + h.town;
+  document.getElementById("mAddr").textContent = h.addr;
+  document.getElementById("mTown").textContent = h.town;
+  document.getElementById("mPrice").textContent = fmt(h.price);
+  document.getElementById("mBadge").textContent = h.town;
+  document.getElementById("mBed").textContent = h.bed;
+  document.getElementById("mBath").textContent = h.bath;
+  document.getElementById("mSf").textContent = h.sf.toLocaleString();
+  document.getElementById("mTown2").textContent = h.town;
+  document.getElementById("mListing").href = h.url;
+  document.getElementById("mSource").href = "https://" + h.src;
+  if(!modalMap) modalMap = buildModalMap();
+  modalMap.setView([h.lat,h.lng], 14);
+  if(modalMarker) modalMarker.remove();
+  modalMarker = L.marker([h.lat,h.lng], {icon:townIcon(h.town)})
+    .addTo(modalMap).bindPopup("<b>"+h.addr+"</b>").openPopup();
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(()=>modalMap.invalidateSize(), 50);
+}
+function closeModal(){
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+overlay.addEventListener("click", e=>{
+  if(e.target===overlay || e.target.closest(".modal-close")) closeModal();
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModal(); });
+
 function render(filter){
   const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
   sortList(list);
@@ -533,13 +634,9 @@ function render(filter){
       </div>`;
     el.addEventListener("click", (ev)=>{
       if(ev.target.closest("a")) return;      // don't intercept links
-      const mk = markers[h.addr
-
-
-
-];     if(mk){ map.setView([h.lat,h.lng], Math.max(map.getZoom(),13)); mk.openPopup(); }
+      openModal(h);
       document.querySelectorAll(".card.hl").forEach(c=>c.classList.remove("hl"));
-      el.classList.add("hl");
+            el.classList.add("hl");
     });
     grid.appendChild(el);
   });
