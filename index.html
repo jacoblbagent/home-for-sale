@@ -4,14 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WNC Homes Under $400K · 2–3 Bedroom</title>
-<style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="icon" href="data:,">
+  <style>
   :root{
     --bg:#0f1115; --panel:#181b22; --panel2:#1e222b; --border:#2b303b;
     --text:#e8eaf0; --muted:#9aa3b2; --accent:#8ab4d8; --gold:#c9a06a;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
   body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;}
-  .wrap{max-width:1240px;margin:0 auto;padding:28px 20px 60px;}
+  .wrap{max-width:1280px;margin:0 auto;padding:28px 20px 60px;}
   header{border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:26px;}
   .kicker{color:var(--accent);font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;}
   h1{font-size:30px;font-weight:700;margin:8px 0 6px;}
@@ -24,10 +28,17 @@
         padding:7px 14px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s;}
   .chip:hover{color:var(--text);}
   .chip.active{background:var(--accent);border-color:var(--accent);color:#0c0e12;font-weight:600;}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+  .layout{display:grid;grid-template-columns:1fr 400px;gap:24px;align-items:start;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;}
+  .mapSide{position:sticky;top:20px;}
+  #map{height:calc(100vh - 190px);min-height:480px;border:1px solid var(--border);border-radius:10px;
+       background:var(--panel2);z-index:0;}
+  .mapHint{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.5;}
+  .mapHint b{color:var(--accent);font-weight:600;}
   .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;
-        display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;}
+        display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;cursor:pointer;}
   .card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
+  .card.hl{outline:2px solid var(--accent);outline-offset:-2px;}
   .ph{position:relative;aspect-ratio:16/10;background:var(--panel2);overflow:hidden;}
   .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
   .card:hover .ph img{transform:scale(1.04);}
@@ -50,8 +61,16 @@
   footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);
          font-size:12.5px;line-height:1.6;}
   footer a{color:var(--accent);}
+  /* Leaflet dark-ish popup tweaks */
+  .leaflet-popup-content{font-family:inherit;}
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip{background:#1e222b;color:var(--text);}
+  .leaflet-popup-content a{color:var(--accent);}
+  .lp-img{width:230px;height:130px;object-fit:cover;border-radius:6px;display:block;margin-bottom:8px;}
+  .lp-price{font-weight:700;font-size:16px;}
+  .lp-spec{color:var(--muted);font-size:12px;margin-top:2px;}
+  @media(max-width:1100px){ .layout{grid-template-columns:1fr;} #map{height:420px;height:60vh;position:sticky;top:20px;} .mapSide{position:static;} }
   @media(max-width:520px){ h1{font-size:24px;} }
-</style>
+  </style>
 </head>
 <body>
 <div class="wrap">
@@ -77,7 +96,15 @@
     <button class="chip" data-town="Bent Creek">Bent Creek / S. Asheville</button>
   </div>
 
-  <div class="grid" id="grid"></div>
+  <div class="layout">
+    <div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <aside class="mapSide">
+      <div id="map"></div>
+      <div class="mapHint"><b>Click a card</b> to focus it on the map, or <b>click a marker</b> for listing details. Markers recolor by the active area filter.</div>
+    </aside>
+  </div>
 
   <footer>
     <p>Listing data &amp; photos served from the Canopy MLS feed via
@@ -90,80 +117,80 @@
 
 <script>
 const HOMES = [
-  {price:394000,bed:3,bath:3,sf:1615,town:"Arden",addr:"202 Southern Charm Rd",
+  {price:394000,bed:3,bath:3,sf:1615,town:"Arden",addr:"202 Southern Charm Rd",lat:35.462341,lng:-82.585866,
    src:"mymosaicrealty.com",img:"images/southerncharms.webp",
    url:"https://mymosaicrealty.com/property/202-southern-charm-road-arden-nc-28704/108504026/"},
-  {price:389000,bed:3,bath:2,sf:1456,town:"Bent Creek / S. Asheville",addr:"195 Shiloh Road",src:"mymosaicrealty.com",
+  {price:389000,bed:3,bath:2,sf:1456,town:"Bent Creek / S. Asheville",addr:"195 Shiloh Road",lat:35.547561,lng:-82.52382,src:"mymosaicrealty.com",
    img:"images/shiloh.webp",url:"https://mymosaicrealty.com/property/195-shiloh-road-asheville-nc-28803/108498948/"},
-  {price:380000,bed:3,bath:2,sf:1650,town:"Brevard",addr:"98 New Sorrells Estate",
+  {price:380000,bed:3,bath:2,sf:1650,town:"Brevard",addr:"98 New Sorrells Estate",lat:35.207431,lng:-82.725987,
    src:"nc-realty.com",img:"images/sorrells.webp",url:"https://nc-realty.com/listing/CAR4414087/98-new-sorrells-estate-brevard-nc-28712/"},
-  {price:375000,bed:3,bath:2,sf:876,town:"Arden",addr:"17 Azalea Road",src:"mymosaicrealty.com",
+  {price:375000,bed:3,bath:2,sf:876,town:"Arden",addr:"17 Azalea Road",lat:35.48053,lng:-82.519507,src:"mymosaicrealty.com",
    img:"images/azalea.webp",url:"https://mymosaicrealty.com/property/17-azalea-road-arden-nc-28704/107927914/"},
-  {price:360000,bed:3,bath:2,sf:1029,town:"Arden",addr:"13 Mallard Run Drive",src:"mymosaicrealty.com",
+  {price:360000,bed:3,bath:2,sf:1029,town:"Arden",addr:"13 Mallard Run Drive",lat:35.458468,lng:-82.560811,src:"mymosaicrealty.com",
    img:"images/mallard.webp",url:"https://mymosaicrealty.com/property/13-mallard-run-drive-arden-nc-28704/108114615/"},
-  {price:350000,bed:3,bath:2,sf:1332,town:"Fletcher",addr:"318 Souther Road",src:"mymosaicrealty.com",
+  {price:350000,bed:3,bath:2,sf:1332,town:"Fletcher",addr:"318 Souther Road",lat:35.429522,lng:-82.450934,src:"mymosaicrealty.com",
    img:"images/souther.webp",url:"https://mymosaicrealty.com/property/318-souther-road-fletcher-nc-28732/108456233/"},
-  {price:345900,bed:3,bath:3,sf:1946,town:"Brevard",addr:"119 Downing Park Court, Unit E",
+  {price:345900,bed:3,bath:3,sf:1946,town:"Brevard",addr:"119 Downing Park Court, Unit E",lat:35.223687,lng:-82.739954,
    src:"nc-realty.com",img:"images/downing.webp",url:"https://nc-realty.com/listing/CAR4416266/119-downing-park-court-brevard-nc-28712/"},
-  {price:334890,bed:3,bath:3,sf:1699,town:"Fletcher",addr:"175 Valley Breeze Road",src:"mymosaicrealty.com",
+  {price:334890,bed:3,bath:3,sf:1699,town:"Fletcher",addr:"175 Valley Breeze Road",lat:35.414823,lng:-82.524752,src:"mymosaicrealty.com",
    img:"images/valleybreeze.webp",url:"https://mymosaicrealty.com/property/175-valley-breeze-road-fletcher-nc-28732/108489949/"},
-  {price:324900,bed:2,bath:2,sf:1274,town:"Fletcher",addr:"123 Lanceford Circle",src:"mymosaicrealty.com",
+  {price:324900,bed:2,bath:2,sf:1274,town:"Fletcher",addr:"123 Lanceford Circle",lat:35.439943,lng:-82.529535,src:"mymosaicrealty.com",
    img:"images/lanceford.webp",url:"https://mymosaicrealty.com/property/123-lanceford-circle-fletcher-nc-28732/108417187/"},
-  {price:299000,bed:3,bath:2,sf:1494,town:"Bent Creek / S. Asheville",addr:"49 Spivey Mountain Road",src:"mymosaicrealty.com",
+  {price:299000,bed:3,bath:2,sf:1494,town:"Bent Creek / S. Asheville",addr:"49 Spivey Mountain Road",lat:35.59249,lng:-82.630043,src:"mymosaicrealty.com",
    img:"images/spivey.webp",url:"https://mymosaicrealty.com/property/49-spivey-mountain-road-asheville-nc-28806/106530372/"},
-  {price:296000,bed:2,bath:2,sf:957,town:"Fletcher",addr:"875 Mills Gap Road",src:"mymosaicrealty.com",
+  {price:296000,bed:2,bath:2,sf:957,town:"Fletcher",addr:"875 Mills Gap Road",lat:35.457759,lng:-82.48019,src:"mymosaicrealty.com",
    img:"images/millsgap.webp",url:"https://mymosaicrealty.com/property/875-mills-gap-road-fletcher-nc-28732/108447160/"},
-  {price:275000,bed:2,bath:2,sf:973,town:"Arden",addr:"203 Rocky Mountain Way",src:"mymosaicrealty.com",
+  {price:275000,bed:2,bath:2,sf:973,town:"Arden",addr:"203 Rocky Mountain Way",lat:35.45264,lng:-82.572725,src:"mymosaicrealty.com",
    img:"images/rocky.webp",url:"https://mymosaicrealty.com/property/203-rocky-mountain-way-arden-nc-28704/101332772/"},
-  {price:275000,bed:3,bath:3,sf:1680,town:"Bent Creek / S. Asheville",addr:"103 Pebble Creek Drive",src:"mymosaicrealty.com",
+  {price:275000,bed:3,bath:3,sf:1680,town:"Bent Creek / S. Asheville",addr:"103 Pebble Creek Drive",lat:35.503086,lng:-82.526939,src:"mymosaicrealty.com",
    img:"images/pebble.webp",url:"https://mymosaicrealty.com/property/103-pebble-creek-drive-asheville-nc-28803/97875815/"},
-  {price:400000,bed:3,bath:3,sf:1596,town:"Bent Creek / S. Asheville",addr:"17 Mill Stone Drive",src:"mymosaicrealty.com",
+  {price:400000,bed:3,bath:3,sf:1596,town:"Bent Creek / S. Asheville",addr:"17 Mill Stone Drive",lat:35.529975,lng:-82.526575,src:"mymosaicrealty.com",
    img:"images/millstone.webp",url:"https://mymosaicrealty.com/property/17-mill-stone-drive-asheville-nc-28803/107834354/"},
-  {price:399000,bed:3,bath:2,sf:1609,town:"Bent Creek / S. Asheville",addr:"25 Village Drive",src:"mymosaicrealty.com",
+  {price:399000,bed:3,bath:2,sf:1609,town:"Bent Creek / S. Asheville",addr:"25 Village Drive",lat:35.510535,lng:-82.527967,src:"mymosaicrealty.com",
    img:"images/village25.webp",url:"https://mymosaicrealty.com/property/25-village-drive-asheville-nc-28803/106954220/"},
-  {price:385000,bed:3,bath:2,sf:1293,town:"Fletcher",addr:"224 Clover Drive",src:"mymosaicrealty.com",
+  {price:385000,bed:3,bath:2,sf:1293,town:"Fletcher",addr:"224 Clover Drive",lat:35.434903,lng:-82.469759,src:"mymosaicrealty.com",
    img:"images/clover.webp",url:"https://mymosaicrealty.com/property/224-clover-drive-fletcher-nc-28732/102683260/"},
-  {price:367520,bed:3,bath:3,sf:1774,town:"Fletcher",addr:"185 Valley Breeze Road",src:"mymosaicrealty.com",
+  {price:367520,bed:3,bath:3,sf:1774,town:"Fletcher",addr:"185 Valley Breeze Road",lat:35.414787,lng:-82.524511,src:"mymosaicrealty.com",
    img:"images/valley185.webp",url:"https://mymosaicrealty.com/property/185-valley-breeze-road-fletcher-nc-28732/107439804/"},
-  {price:339000,bed:2,bath:1,sf:949,town:"Bent Creek / S. Asheville",addr:"22 Wilson Creek Drive",src:"mymosaicrealty.com",
+  {price:339000,bed:2,bath:1,sf:949,town:"Bent Creek / S. Asheville",addr:"22 Wilson Creek Drive",lat:35.553936,lng:-82.525488,src:"mymosaicrealty.com",
    img:"images/wilson.webp",url:"https://mymosaicrealty.com/property/22-wilson-creek-drive-asheville-nc-28803/106434630/"},
-  {price:299999,bed:3,bath:2,sf:1040,town:"Fletcher",addr:"289 Cardwell Lane",src:"mymosaicrealty.com",
+  {price:299999,bed:3,bath:2,sf:1040,town:"Fletcher",addr:"289 Cardwell Lane",lat:35.408822,lng:-82.503151,src:"mymosaicrealty.com",
    img:"images/cardwell.webp",url:"https://mymosaicrealty.com/property/289-cardwell-lane-fletcher-nc-28732/107938801/"},
-  {price:290000,bed:2,bath:3,sf:1824,town:"Bent Creek / S. Asheville",addr:"54 Hollybrook Drive",src:"mymosaicrealty.com",
+  {price:290000,bed:2,bath:3,sf:1824,town:"Bent Creek / S. Asheville",addr:"54 Hollybrook Drive",lat:35.514395,lng:-82.520019,src:"mymosaicrealty.com",
    img:"images/hollybrook.webp",url:"https://mymosaicrealty.com/property/54-hollybrook-drive-asheville-nc-28803/106322357/"},
-  {price:280000,bed:2,bath:2,sf:1219,town:"Bent Creek / S. Asheville",addr:"117 Pebble Creek Drive",src:"mymosaicrealty.com",
+  {price:280000,bed:2,bath:2,sf:1219,town:"Bent Creek / S. Asheville",addr:"117 Pebble Creek Drive",lat:35.502876,lng:-82.527271,src:"mymosaicrealty.com",
    img:"images/pebble117.webp",url:"https://mymosaicrealty.com/property/117-pebble-creek-drive-asheville-nc-28803/106666036/"},
-  {price:260000,bed:2,bath:2,sf:1050,town:"Fletcher",addr:"43 Foxden Drive, Unit 104",src:"mymosaicrealty.com",
+  {price:260000,bed:2,bath:2,sf:1050,town:"Fletcher",addr:"43 Foxden Drive, Unit 104",lat:35.409825,lng:-82.495022,src:"mymosaicrealty.com",
    img:"images/foxden43.webp",url:"https://mymosaicrealty.com/property/43-foxden-drive-fletcher-nc-28732/108013448/"},
-  {price:239000,bed:2,bath:2,sf:1070,town:"Fletcher",addr:"4 Meadow Glen Drive",src:"mymosaicrealty.com",
+  {price:239000,bed:2,bath:2,sf:1070,town:"Fletcher",addr:"4 Meadow Glen Drive",lat:35.43854,lng:-82.46719,src:"mymosaicrealty.com",
    img:"images/meadow4.webp",url:"https://mymosaicrealty.com/property/4-meadow-glen-drive-fletcher-nc-28732/107853412/"},
-  {price:239000,bed:2,bath:2,sf:1070,town:"Fletcher",addr:"2 Meadow Glen Drive",src:"mymosaicrealty.com",
+  {price:239000,bed:2,bath:2,sf:1070,town:"Fletcher",addr:"2 Meadow Glen Drive",lat:35.438548,lng:-82.467203,src:"mymosaicrealty.com",
    img:"images/meadow2.webp",url:"https://mymosaicrealty.com/property/2-meadow-glen-drive-fletcher-nc-28732/107774727/"},
-  {price:236000,bed:2,bath:2,sf:1122,town:"Bent Creek / S. Asheville",addr:"304 Birch Forest Lane",src:"mymosaicrealty.com",
+  {price:236000,bed:2,bath:2,sf:1122,town:"Bent Creek / S. Asheville",addr:"304 Birch Forest Lane",lat:35.502902,lng:-82.527632,src:"mymosaicrealty.com",
    img:"images/birch.webp",url:"https://mymosaicrealty.com/property/304-birch-forest-lane-asheville-nc-28803/107772535/"},
-  {price:225000,bed:2,bath:2,sf:1106,town:"Fletcher",addr:"7 Country Gardens Drive",src:"mymosaicrealty.com",
+  {price:225000,bed:2,bath:2,sf:1106,town:"Fletcher",addr:"7 Country Gardens Drive",lat:35.438044,lng:-82.467656,src:"mymosaicrealty.com",
    img:"images/country7.webp",url:"https://mymosaicrealty.com/property/7-country-gardens-drive-fletcher-nc-28732/107834341/"},
-  {price:215000,bed:2,bath:2,sf:1106,town:"Fletcher",addr:"5 Country Gardens Drive",src:"mymosaicrealty.com",
+  {price:215000,bed:2,bath:2,sf:1106,town:"Fletcher",addr:"5 Country Gardens Drive",lat:35.438137,lng:-82.467547,src:"mymosaicrealty.com",
    img:"images/country5.webp",url:"https://mymosaicrealty.com/property/5-country-gardens-drive-fletcher-nc-28732/107493427/"},
-  {price:213000,bed:2,bath:2,sf:992,town:"Bent Creek / S. Asheville",addr:"111 Appeldoorn Circle",src:"mymosaicrealty.com",
+  {price:213000,bed:2,bath:2,sf:992,town:"Bent Creek / S. Asheville",addr:"111 Appeldoorn Circle",lat:35.553449,lng:-82.527656,src:"mymosaicrealty.com",
    img:"images/appeldoorn111.webp",url:"https://mymosaicrealty.com/property/111-appeldoorn-circle-asheville-nc-28803/106414587/"},
-  {price:210000,bed:3,bath:2,sf:1243,town:"Bent Creek / S. Asheville",addr:"332 Appeldoorn Circle",src:"mymosaicrealty.com",
+  {price:210000,bed:3,bath:2,sf:1243,town:"Bent Creek / S. Asheville",addr:"332 Appeldoorn Circle",lat:35.553449,lng:-82.527656,src:"mymosaicrealty.com",
    img:"images/appeldoorn332.webp",url:"https://mymosaicrealty.com/property/332-appeldoorn-circle-asheville-nc-28803/90770115/"},
-  {price:207000,bed:2,bath:2,sf:1273,town:"Fletcher",addr:"93 Foxden Drive, Unit 102",src:"mymosaicrealty.com",
+  {price:207000,bed:2,bath:2,sf:1273,town:"Fletcher",addr:"93 Foxden Drive, Unit 102",lat:35.410052,lng:-82.494765,src:"mymosaicrealty.com",
    img:"images/foxden93.webp",url:"https://mymosaicrealty.com/property/93-foxden-drive-fletcher-nc-28732/108113502/"},
-  {price:198850,bed:2,bath:2,sf:950,town:"Arden",addr:"16 Mallory Lane",src:"mymosaicrealty.com",
+  {price:198850,bed:2,bath:2,sf:950,town:"Arden",addr:"16 Mallory Lane",lat:35.451358,lng:-82.493462,src:"mymosaicrealty.com",
    img:"images/arden_mallory16.webp",url:"https://mymosaicrealty.com/property/16-mallory-lane-arden-nc-28704/100381538/"},
-  {price:215000,bed:2,bath:2,sf:1006,town:"Arden",addr:"405 Southway Garden Road",src:"mymosaicrealty.com",
+  {price:215000,bed:2,bath:2,sf:1006,town:"Arden",addr:"405 Southway Garden Road",lat:35.483783,lng:-82.517498,src:"mymosaicrealty.com",
    img:"images/arden_southway405.webp",url:"https://mymosaicrealty.com/property/405-southway-garden-road-arden-nc-28704/107915475/"},
-  {price:225000,bed:2,bath:2,sf:1145,town:"Arden",addr:"403 Carrington Place",src:"mymosaicrealty.com",
+  {price:225000,bed:2,bath:2,sf:1145,town:"Arden",addr:"403 Carrington Place",lat:35.467999,lng:-82.510941,src:"mymosaicrealty.com",
    img:"images/arden_carrington403.webp",url:"https://mymosaicrealty.com/property/403-carrington-place-arden-nc-28704/107730276/"},
-  {price:234500,bed:2,bath:2,sf:1148,town:"Arden",addr:"110 Heywood Road, Unit 8D",src:"mymosaicrealty.com",
+  {price:234500,bed:2,bath:2,sf:1148,town:"Arden",addr:"110 Heywood Road, Unit 8D",lat:35.47161,lng:-82.530034,src:"mymosaicrealty.com",
    img:"images/arden_heywood110.webp",url:"https://mymosaicrealty.com/property/110-heywood-road-arden-nc-28704/108023017/"},
-  {price:235000,bed:3,bath:3,sf:1295,town:"Arden",addr:"119 Colony Drive",src:"mymosaicrealty.com",
+  {price:235000,bed:3,bath:3,sf:1295,town:"Arden",addr:"119 Colony Drive",lat:35.470896,lng:-82.512961,src:"mymosaicrealty.com",
    img:"images/arden_colony119.webp",url:"https://mymosaicrealty.com/property/119-colony-drive-arden-nc-28704/107872179/"},
-  {price:299000,bed:3,bath:2,sf:1340,town:"Arden",addr:"14 Palatka Street",src:"mymosaicrealty.com",
+  {price:299000,bed:3,bath:2,sf:1340,town:"Arden",addr:"14 Palatka Street",lat:35.462961,lng:-82.504119,src:"mymosaicrealty.com",
    img:"images/arden_palatka14.webp",url:"https://mymosaicrealty.com/property/14-palatka-street-arden-nc-28704/107821409/"},
-  {price:359000,bed:3,bath:2,sf:1420,town:"Arden",addr:"15 Winding Oak Drive",src:"mymosaicrealty.com",
+  {price:359000,bed:3,bath:2,sf:1420,town:"Arden",addr:"15 Winding Oak Drive",lat:35.459979,lng:-82.541627,src:"mymosaicrealty.com",
    img:"images/arden_winding15.webp",url:"https://mymosaicrealty.com/property/15-winding-oak-drive-arden-nc-28704/107584023/"}
 ];
 
@@ -171,12 +198,65 @@ const fmt = p => "$" + p.toLocaleString("en-US");
 const grid = document.getElementById("grid");
 const statCount = document.getElementById("statCount");
 
+/* ---------- Leaflet map ---------- */
+const map = L.map("map", {scrollWheelZoom:false}).setView([35.43,-82.55], 10);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:18, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+}).addTo(map);
+
+const TOWN_COLOR = {
+  "Arden":"#8ab4d8",
+  "Fletcher":"#c9a06a",
+  "Brevard":"#7ec8a3",
+  "Bent Creek / S. Asheville":"#c98ab4"
+};
+const markers = {};   // addr -> marker
+let activeFilter = "All";
+
+function popupHTML(h){
+  return `<img class="lp-img" src="${h.img}" alt="${h.addr}">
+    <div class="lp-price">${fmt(h.price)}</div>
+    <div class="lp-spec">${h.bed} bd · ${h.bath} ba · ${h.sf.toLocaleString()} sqft · ${h.town}</div>
+    <div class="lp-spec" style="margin-top:4px"><a href="${h.url}" target="_blank" rel="noopener">View listing ↗</a></div>`;
+}
+
+function townIcon(town){
+  const c = TOWN_COLOR[town] || "#8ab4d8";
+  return L.divIcon({
+    className:"",
+    html:`<div style="width:16px;height:16px;background:${c};border:2px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.6);"></div>`,
+    iconSize:[16,16], iconAnchor:[8,8], popupAnchor:[0,-8]
+  });
+}
+
+HOMES.forEach(h=>{
+  const mk = L.marker([h.lat,h.lng], {icon:townIcon(TOWN_COLOR[h.town]||"#8ab4d8")}).bindPopup(popupHTML(h));
+  markers[h.addr] = mk;
+});
+
+const markedLayer = L.layerGroup().addTo(map);
+function showMarkers(filter){
+  const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
+  markedLayer.clearLayers();
+  list.forEach(h=>{
+    const mk = markers[h.addr];
+    mk.setIcon(townIcon(TOWN_COLOR[h.town]||"#8ab4d8"));
+    markedLayer.addLayer(mk);
+  });
+  if(list.length){
+    const bounds = L.latLngBounds(list.map(h=>[h.lat,h.lng]));
+    map.fitBounds(bounds.pad(0.15));
+  }
+}
+
 function render(filter){
   const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
   grid.innerHTML = "";
   statCount.textContent = list.length;
   const areas = document.getElementById("statAreas");
   if(areas){ areas.textContent = new Set(list.map(h=>h.town)).size; }
+  // sync map markers to filter + color by town
+  showMarkers(filter);
   if(!list.length){
     grid.innerHTML = '<div class="empty">No matching homes in this area right now.</div>';
     return;
@@ -184,6 +264,7 @@ function render(filter){
   list.forEach(h=>{
     const el = document.createElement("div");
     el.className = "card";
+    el.dataset.addr = h.addr;
     el.innerHTML = `
       <div class="ph">
         <img loading="lazy" src="${h.img}" alt="${h.addr}, ${h.town}">
@@ -203,6 +284,13 @@ function render(filter){
           <a class="btn btn-ghost" href="${h.src}" target="_blank" rel="noopener">Source</a>
         </div>
       </div>`;
+    el.addEventListener("click", (ev)=>{
+      if(ev.target.closest("a")) return;      // don't intercept links
+      const mk = markers[h.addr];
+      if(mk){ map.setView([h.lat,h.lng], Math.max(map.getZoom(),13)); mk.openPopup(); }
+      document.querySelectorAll(".card.hl").forEach(c=>c.classList.remove("hl"));
+      el.classList.add("hl");
+    });
     grid.appendChild(el);
   });
 }
