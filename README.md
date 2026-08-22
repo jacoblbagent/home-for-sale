@@ -4,6 +4,8 @@ A fast, single-file reference site for home listings in Western North Carolina. 
 
 Private GitHub Pages site, built locally from the Canopy MLS feeds.
 
+**Live site:** [jacoblbagent.github.io/home-for-sale](https://jacoblbagent.github.io/home-for-sale)
+
 ![Map preview](home-for-sale-map-preview.png)
 
 ## Features
