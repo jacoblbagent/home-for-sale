@@ -46,8 +46,6 @@
   .card:hover .ph img{transform:scale(1.04);}
   .price{position:absolute;top:12px;left:12px;background:rgba(10,12,16,.82);backdrop-filter:blur(4px);
          color:#fff;font-size:19px;font-weight:700;padding:5px 12px;border-radius:3px;}
-  .badge{position:absolute;top:12px;right:12px;background:rgba(10,12,16,.82);color:var(--muted);
-         font-size:12px;padding:4px 10px;border-radius:3px;border:1px solid var(--border);}
   .body{padding:16px 16px 18px;display:flex;flex-direction:column;flex:1;}
   .addr{font-size:16px;font-weight:600;line-height:1.3;}
   .town{color:var(--accent);font-size:13px;margin-top:3px;}
@@ -86,7 +84,6 @@
   .modal-close:hover{color:var(--text);background:var(--panel2);}
   .modal-hero{position:relative;border-bottom:1px solid var(--border);background:#000;}
   .modal-hero img{width:100%;max-height:300px;object-fit:contain;display:block;background:#000;cursor:zoom-in;}
-  .modal-hero .badge{position:absolute;top:14px;right:16px;}
   /* fullscreen lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:flex;
            align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s;}
@@ -168,7 +165,6 @@
     </div>
     <div class="modal-hero">
       <img id="mImg" alt="">
-      <span class="badge" id="mBadge"></span>
     </div>
     <div class="modal-body">
       <div class="modal-specs">
@@ -535,7 +531,6 @@ function openModal(h){
   document.getElementById("mImg").alt = fullAddr(h);
   document.getElementById("mAddr").textContent = fullAddr(h);
   document.getElementById("mPrice").textContent = fmt(h.price);
-  document.getElementById("mBadge").textContent = h.town;
   document.getElementById("mBed").textContent = h.bed;
   document.getElementById("mBath").textContent = h.bath;
   document.getElementById("mSf").textContent = h.sf.toLocaleString();
@@ -603,7 +598,6 @@ function render(filter){
       <div class="ph">
         <img loading="lazy" src="${h.img}" alt="${h.addr}, ${h.town}">
         <span class="price">${fmt(h.price)}</span>
-        <span class="badge">${h.town}</span>
       </div>
       <div class="body">
         <div class="addr">${fullAddr(h)}</div>
