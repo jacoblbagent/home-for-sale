@@ -237,12 +237,19 @@ function popupHTML(h){
     <div class="lp-spec" style="margin-top:4px"><a href="${h.url}" target="_blank" rel="noopener">View listing ↗</a></div>`;
 }
 
-function townIcon(town){
+function townIcon(town, opts){
   const c = TOWN_COLOR[town] || "#8ab4d8";
+  const dim = opts && opts.dim;
+  const sel = opts && opts.active;
+  const bg = dim ? "#5a6170" : c;
+  const border = sel ? "#ffffff" : (dim ? "#3a3f4a" : "#ffffff");
+  const size = sel ? 20 : 16;
+  const box = sel ? "0 0 0 3px rgba(138,180,216,.55)" : "0 1px 5px rgba(0,0,0,.6)";
+  const op = dim ? .45 : 1;
   return L.divIcon({
     className:"",
-    html:`<div style="width:16px;height:16px;background:${c};border:2px solid #fff;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.6);"></div>`,
-    iconSize:[16,16], iconAnchor:[8,8], popupAnchor:[0,-8]
+    html:`<div style="width:${size}px;height:${size}px;background:${bg};border:${sel?3:2}px solid ${border};border-radius:50%;box-shadow:${box};opacity:${op};transition:all .2s;"></div>`,
+    iconSize:[size,size], iconAnchor:[size/2,size/2], popupAnchor:[0,-size/2]
   });
 }
 
@@ -253,16 +260,34 @@ HOMES.forEach(h=>{
 
 const markedLayer = L.layerGroup().addTo(map);
 function showMarkers(filter){
-  const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
+  const isAll = filter==="All";
+  const list = isAll ? HOMES : HOMES.filter(h=>h.town.includes(filter));
   markedLayer.clearLayers();
   list.forEach(h=>{
     const mk = markers[h.addr];
-    mk.setIcon(townIcon(TOWN_COLOR[h.town]||"#8ab4d8"));
+    mk.setIcon(townIcon(TOWN_COLOR[h.town]||"#8ab4d8", { active:!isAll }));
+    mk.closePopup?.();
     markedLayer.addLayer(mk);
   });
-  if(list.length){
-    const bounds = L.latLngBounds(list.map(h=>[h.lat,h.lng]));
+  if(!isAll){
+    // keep other areas visible but dimmed, so the selected area stands out with context
+    HOMES.forEach(h=>{
+      if(!list.includes(h)){
+        const mk = markers[h.addr];
+        mk.setIcon(townIcon("#8ab4d8", { dim:true }));
+        mk.setOpacity?.(1);
+        markedLayer.addLayer(mk);
+      }
+    });
+  }
+  if(list.length && isAll){
+    // only auto-fit on "All" or single-area selections; for a selected area keep the dims in view too
+    const all = isAll ? list : HOMES;
+    const bounds = L.latLngBounds(all.map(h=>[h.lat,h.lng]));
     map.fitBounds(bounds.pad(0.15));
+  } else if(!isAll){
+    const bounds = L.latLngBounds(HOMES.map(h=>[h.lat,h.lng]));
+    map.fitBounds(bounds.pad(0.12));
   }
 }
 
