@@ -86,7 +86,6 @@
   .modal-close:hover{color:var(--text);background:var(--panel2);}
   .modal-hero{position:relative;border-bottom:1px solid var(--border);background:#000;}
   .modal-hero img{width:100%;max-height:300px;object-fit:contain;display:block;background:#000;cursor:zoom-in;}
-  .modal-hero .price{position:absolute;top:14px;left:16px;font-size:26px;width:auto;}
   .modal-hero .badge{position:absolute;top:14px;right:16px;}
   /* fullscreen lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:flex;
@@ -97,8 +96,9 @@
                  line-height:1;cursor:pointer;padding:4px 10px;border-radius:4px;transition:.15s;}
   .lightbox-close:hover{background:rgba(255,255,255,.15);}
   .modal-body{padding:0 24px 10px;}
-  .modal-specs{display:flex;gap:24px;padding:18px 0;border-bottom:1px solid var(--border);}
+  .modal-specs{display:flex;flex-wrap:wrap;gap:24px;padding:18px 0;border-bottom:1px solid var(--border);}
   .modal-specs .spec b{font-size:20px;color:var(--text);}
+  .modal-specs .spec b#mPrice{color:var(--accent);}
   .modal-specs .spec{color:var(--muted);font-size:13px;}
   .modal-mapsec{padding:18px 0 22px;}
   .modal-mapsec h3{font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:10px;}
@@ -168,11 +168,11 @@
     </div>
     <div class="modal-hero">
       <img id="mImg" alt="">
-      <span class="price" id="mPrice"></span>
       <span class="badge" id="mBadge"></span>
     </div>
     <div class="modal-body">
       <div class="modal-specs">
+        <span class="spec"><b id="mPrice"></b><br>Price</span>
         <span class="spec"><b id="mBed"></b><br>Beds</span>
         <span class="spec"><b id="mBath"></b><br>Baths</span>
         <span class="spec"><b id="mSf"></b><br>SqFt</span>
@@ -444,16 +444,17 @@ function popupHTML(h){
 
 function townIcon(town, opts){
   const c = TOWN_COLOR[town] || "#8ab4d8";
+  const hover = opts && opts.hover;
   const dim = opts && opts.dim;
   const sel = opts && opts.active;
   const bg = dim ? "#5a6170" : c;
-  const border = sel ? "#ffffff" : (dim ? "#3a3f4a" : "#ffffff");
-  const size = sel ? 20 : 16;
-  const box = sel ? "0 0 0 3px rgba(138,180,216,.55)" : "0 1px 5px rgba(0,0,0,.6)";
+  const border = hover ? "#ffd76a" : (sel ? "#ffffff" : (dim ? "#3a3f4a" : "#ffffff"));
+  const size = hover ? 26 : (sel ? 20 : 16);
+  const box = hover ? "0 0 0 4px rgba(255,215,106,.6)" : (sel ? "0 0 0 3px rgba(138,180,216,.55)" : "0 1px 5px rgba(0,0,0,.6)");
   const op = dim ? .45 : 1;
   return L.divIcon({
     className:"",
-    html:`<div style="width:${size}px;height:${size}px;background:${bg};border:${sel?3:2}px solid ${border};border-radius:50%;box-shadow:${box};opacity:${op};transition:all .2s;"></div>`,
+    html:`<div style="width:${size}px;height:${size}px;background:${bg};border:${hover||sel?3:2}px solid ${border};border-radius:50%;box-shadow:${box};opacity:${op};transition:all .2s;"></div>`,
     iconSize:[size,size], iconAnchor:[size/2,size/2], popupAnchor:[0,-size/2]
   });
 }
@@ -462,6 +463,23 @@ HOMES.forEach(h=>{
   const mk = L.marker([h.lat,h.lng], {icon:townIcon(TOWN_COLOR[h.town]||"#8ab4d8")}).bindPopup(popupHTML(h));
   markers[h.addr] = mk;
 });
+let hoveredAddr = null;
+function setHoverMarkers(addr){
+  if(hoveredAddr === addr) return;
+  if(hoveredAddr && markers[hoveredAddr]){
+    const mk = markers[hoveredAddr];
+    mk.setIcon(mk._baseIcon || mk.getIcon());
+    mk.setZIndexOffset(0);
+  }
+  hoveredAddr = addr;
+  if(addr){
+    const mk = markers[addr];
+    if(!mk) return;
+    const h = HOMES.find(x=>x.addr===addr);
+    mk.setIcon(townIcon(h ? h.town : "", { hover:true }));
+    mk.setZIndexOffset(1000);   // raises marker above others
+  }
+}
 
 const markedLayer = L.layerGroup().addTo(map);
 function showMarkers(filter){
@@ -471,6 +489,7 @@ function showMarkers(filter){
   list.forEach(h=>{
     const mk = markers[h.addr];
     mk.setIcon(townIcon(TOWN_COLOR[h.town]||"#8ab4d8", { active:!isAll }));
+    mk._baseIcon = mk.getIcon();
     mk.closePopup?.();
     markedLayer.addLayer(mk);
   });
@@ -480,11 +499,13 @@ function showMarkers(filter){
       if(!list.includes(h)){
         const mk = markers[h.addr];
         mk.setIcon(townIcon("#8ab4d8", { dim:true }));
+        mk._baseIcon = mk.getIcon();
         mk.setOpacity?.(1);
         markedLayer.addLayer(mk);
       }
     });
   }
+  setHoverMarkers(null);
   if(list.length && isAll){
     // only auto-fit on "All" or single-area selections; for a selected area keep the dims in view too
     const all = isAll ? list : HOMES;
@@ -600,6 +621,8 @@ function render(filter){
       document.querySelectorAll(".card.hl").forEach(c=>c.classList.remove("hl"));
             el.classList.add("hl");
     });
+    el.addEventListener("mouseenter", ()=> setHoverMarkers(h.addr));
+    el.addEventListener("mouseleave", ()=> setHoverMarkers(null));
     grid.appendChild(el);
   });
 }
