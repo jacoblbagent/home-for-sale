@@ -98,8 +98,6 @@
   .modal-specs .price-spec b{font-size:30px;font-weight:700;color:var(--text);}
   .modal-specs .spec{color:var(--muted);font-size:13px;}
   .modal-mapsec{padding:18px 0 22px;}
-  .modal-mapsec h3{font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:10px;}
-  .modal-mapsec h3 b{color:var(--text);}
   #modalMap{height:320px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);}
   .modal-actions{display:flex;justify-content:flex-end;padding:0 24px 24px;}
   .modal-actions .btn{padding:9px 20px;font-size:14px;border-radius:5px;}
@@ -173,7 +171,6 @@
         <span class="spec"><b id="mSf"></b><br>SqFt</span>
       </div>
       <div class="modal-mapsec">
-        <h3>Location · <b id="mTown2"></b></h3>
         <div id="modalMap"></div>
       </div>
     </div>
@@ -533,7 +530,6 @@ function openModal(h){
   document.getElementById("mBed").textContent = h.bed;
   document.getElementById("mBath").textContent = h.bath;
   document.getElementById("mSf").textContent = h.sf.toLocaleString();
-  document.getElementById("mTown2").textContent = h.town;
   document.getElementById("mSource").href = "https://" + h.src;
   if(!modalMap) modalMap = buildModalMap();
   modalMap.setView([h.lat,h.lng], 14);
