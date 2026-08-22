@@ -26,6 +26,17 @@
   .sorter label{font-size:13px;color:var(--muted);white-space:nowrap;}
   .sorter select{background:var(--panel);color:var(--text);border:1px solid var(--border);
     border-radius:3px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:inherit;}
+  .perpage{display:flex;align-items:center;gap:8px;}
+  .perpage label{font-size:13px;color:var(--muted);white-space:nowrap;}
+  .perpage select{background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:3px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:inherit;}
+  .pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin:26px 0 4px;flex-wrap:wrap;}
+  .page-btn{border:1px solid var(--border);background:var(--panel);color:var(--muted);
+        padding:6px 12px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s;}
+  .page-btn:hover{color:var(--text);}
+  .page-btn.active{background:var(--accent);border-color:var(--accent);color:#0c0e12;font-weight:600;}
+  .page-btn:disabled{opacity:.4;cursor:default;}
+  .page-info{font-size:13px;color:var(--muted);margin:0 6px;white-space:nowrap;}
   .chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);
         padding:7px 14px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s;}
   .chip:hover{color:var(--text);}
@@ -131,7 +142,18 @@
         <option value="sf-asc">Square Feet: Low to High</option>
       </select>
     </div>
+    <div class="perpage">
+      <label for="perPage">Show</label>
+      <select id="perPage">
+        <option value="12">12</option>
+        <option value="24" selected>24</option>
+        <option value="48">48</option>
+        <option value="0">All</option>
+      </select>
+    </div>
   </div>
+
+  <div class="pagination" id="pagination"></div>
 
   <div class="layout">
     <div>
@@ -418,6 +440,7 @@ const TOWN_COLOR = {
 const markers = {};   // addr -> marker
 let activeFilter = "All";
 let activeSort = "price-desc";
+let page = 1;
 
 const SORTERS = {
   "price-desc":(a,b)=>b.price-a.price,
@@ -577,15 +600,22 @@ document.addEventListener("keydown", e=>{
 function render(filter){
   const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
   sortList(list);
-  grid.innerHTML = "";
   statCount.textContent = list.length;
   // sync map markers to filter + color by town
   showMarkers(filter);
-  if(!list.length){
+  // paginate
+  const pag = document.getElementById("pagination");
+  const pp = parseInt(document.getElementById("perPage").value, 10) || 0;
+  const totalPages = pp ? Math.ceil(list.length / pp) : 1;
+  if(page > totalPages) page = Math.max(1, totalPages);
+  const pageList = pp ? list.slice((page-1)*pp, page*pp) : list;
+  grid.innerHTML = "";
+  if(!pageList.length){
     grid.innerHTML = '<div class="empty">No matching homes in this area right now.</div>';
+    pag.innerHTML = "";
     return;
   }
-  list.forEach(h=>{
+  pageList.forEach(h=>{
     const el = document.createElement("div");
     el.className = "card";
     el.dataset.addr = h.addr;
@@ -612,7 +642,33 @@ function render(filter){
     el.addEventListener("mouseleave", ()=> setHoverMarkers(null));
     grid.appendChild(el);
   });
+  drawPagination(totalPages, list.length, perPage());
 }
+function perPage(){ return parseInt(document.getElementById("perPage").value, 10) || 0; }
+function drawPagination(totalPages, totalItems){
+  const pag = document.getElementById("pagination");
+  if(totalPages <= 1){ pag.innerHTML = ""; return; }
+  const p = perPage();
+  const from = totalItems===0 ? 0 : (page-1)*p + 1;
+  const to = Math.min(page*p, totalItems);
+  let s = `<span class="page-info">${from}–${to} of ${totalItems}</span>`;
+  s += `<button class="page-btn" data-goto="${page-1}" ${page===1?'disabled':''}>‹ Prev</button>`;
+  for(let i=1;i<=totalPages;i++){
+    s += `<button class="page-btn ${i===page?'active':''}" data-goto="${i}">${i}</button>`;
+  }
+  s += `<button class="page-btn" data-goto="${page+1}" ${page===totalPages?'disabled':''}>Next ›</button>`;
+  pag.innerHTML = s;
+}
+document.getElementById("pagination").addEventListener("click", e=>{
+  const btn = e.target.closest(".page-btn");
+  if(!btn || btn.disabled) return;
+  page = parseInt(btn.dataset.goto, 10);
+  render(activeFilter);
+});
+document.getElementById("perPage").addEventListener("change", e=>{
+  page = 1;
+  render(activeFilter);
+});
 
 document.getElementById("filters").addEventListener("click", e=>{
   const chip = e.target.closest(".chip");
@@ -620,11 +676,13 @@ document.getElementById("filters").addEventListener("click", e=>{
   document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
   chip.classList.add("active");
   activeFilter = chip.dataset.town;
+  page = 1;
   render(activeFilter);
 });
 
 document.getElementById("sortSel").addEventListener("change", e=>{
   activeSort = e.target.value;
+  page = 1;
   render(activeFilter);
 });
 
