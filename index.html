@@ -33,10 +33,8 @@
         border-radius:6px;padding:10px;min-width:200px;}
   .filters.open{display:flex;}
   .filters .chip{width:100%;text-align:left;}
-  .sorter{margin-left:auto;display:flex;align-items:center;gap:8px;}
-  .sorter label{font-size:13px;color:var(--muted);white-space:nowrap;}
-  .sorter select{background:var(--panel);color:var(--text);border:1px solid var(--border);
-    border-radius:3px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:inherit;}
+  .homesCount+.sort-sel, .sort-sel{margin-left:auto;background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:3px;padding:5px 8px;font-size:12px;cursor:pointer;font-family:inherit;}
   .pagination{display:flex;align-items:center;justify-content:center;gap:12px;margin:26px 0 4px;flex-wrap:wrap;}
   .pp-wrap{display:flex;align-items:center;gap:6px;}
   .pp-wrap label{font-size:13px;color:var(--muted);white-space:nowrap;}
@@ -97,11 +95,11 @@
   .overlay.open{opacity:1;pointer-events:auto;}
   .modal{background:var(--panel);border:1px solid var(--border);border-radius:8px;width:min(860px,100%);
         max-height:calc(100vh - 60px);overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5);}
-  .modal-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;
-             padding:22px 24px 18px;border-bottom:1px solid var(--border);}
+  .modal-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px;
+             padding:12px 24px 10px;border-bottom:1px solid var(--border);}
   .modal-title .addr{font-size:22px;font-weight:700;line-height:1.25;}
   .modal-title .town{color:var(--accent);font-size:14px;margin-top:4px;}
-  .modal-specs{display:flex;flex-wrap:wrap;gap:24px;padding:18px 0 0;width:100%;}
+  .modal-specs{display:flex;flex-wrap:wrap;gap:16px;padding:8px 0 0;width:100%;}
     .modal-close{background:none;border:none;color:var(--muted);font-size:26px;line-height:1;cursor:pointer;
                 padding:2px 6px;border-radius:3px;transition:.15s;}
     .modal-close:hover{color:var(--text);background:var(--panel2);}
@@ -136,7 +134,6 @@
 <div class="layout">
     <div class="list-col">
   <div class="filterbar">
-    <div class="homesCount"><span id="statCount">—</span> Listings</div>
     <div class="filters-wrap">
       <button class="filter-toggle" id="filterToggle" aria-label="Filter by area" aria-expanded="false" title="Filter">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
@@ -149,17 +146,15 @@
         <button class="chip" data-town="Bent Creek">Bent Creek / S. Asheville</button>
       </div>
     </div>
-    <div class="sorter">
-      <label for="sortSel">Sort by</label>
-      <select id="sortSel">
-        <option value="price-desc" selected>Price: High to Low</option>
-        <option value="price-asc">Price: Low to High</option>
-        <option value="beds-desc">Bedrooms: High to Low</option>
-        <option value="beds-asc">Bedrooms: Low to High</option>
-        <option value="sf-desc">Square Feet: High to Low</option>
-        <option value="sf-asc">Square Feet: Low to High</option>
-      </select>
-    </div>
+    <div class="homesCount"><span id="statCount">—</span> Listings</div>
+    <select id="sortSel" class="sort-sel">
+      <option value="price-desc" selected>Price: High to Low</option>
+      <option value="price-asc">Price: Low to High</option>
+      <option value="beds-desc">Bedrooms: High to Low</option>
+      <option value="beds-asc">Bedrooms: Low to High</option>
+      <option value="sf-desc">Square Feet: High to Low</option>
+      <option value="sf-asc">Square Feet: Low to High</option>
+    </select>
   </div>
       <div class="grid" id="grid"></div>
       <div class="pagination" id="pagination">
