@@ -175,7 +175,6 @@
       </div>
     </div>
     <div class="modal-actions">
-      <a class="btn btn-primary" id="mListing" href="#" target="_blank" rel="noopener">View Listing</a>
       <a class="btn btn-ghost" id="mSource" href="#" target="_blank" rel="noopener">Source</a>
     </div>
   </div>
@@ -578,7 +577,6 @@ function openModal(h){
   document.getElementById("mBath").textContent = h.bath;
   document.getElementById("mSf").textContent = h.sf.toLocaleString();
   document.getElementById("mTown2").textContent = h.town;
-  document.getElementById("mListing").href = h.url;
   document.getElementById("mSource").href = "https://" + h.src;
   if(!modalMap) modalMap = buildModalMap();
   modalMap.setView([h.lat,h.lng], 14);
