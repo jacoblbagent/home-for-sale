@@ -63,7 +63,7 @@
   .mapHint{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.5;}
   .mapHint b{color:var(--accent);font-weight:600;}
   .card{background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden;
-        display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;}
+        display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;cursor:pointer;}
   .card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
   .card.hl{outline:2px solid var(--accent);outline-offset:-2px;}
   .ph{position:relative;aspect-ratio:16/10;background:var(--panel2);overflow:hidden;}
@@ -92,7 +92,41 @@
   .lp-img{width:230px;height:130px;object-fit:cover;border-radius:6px;display:block;margin-bottom:8px;}
   .lp-price{font-weight:700;font-size:16px;}
   .lp-spec{color:var(--muted);font-size:12px;margin-top:2px;}
-  @media(max-width:1100px){ .layout{grid-template-columns:1fr;} #map{height:420px;height:60vh;position:sticky;top:20px;} .mapSide{position:static;} }
+  /* ---------- Listing modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(8,10,14,.66);backdrop-filter:blur(3px);
+          display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;
+          opacity:0;pointer-events:none;transition:opacity .18s;}
+  .overlay.open{opacity:1;pointer-events:auto;}
+  .modal{background:var(--panel);border:1px solid var(--border);border-radius:8px;width:min(860px,100%);
+        max-height:calc(100vh - 60px);overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+  .modal-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px;
+             padding:12px 24px 10px;border-bottom:1px solid var(--border);}
+  .modal-title .addr{font-size:22px;font-weight:700;line-height:1.25;}
+  .modal-title .town{color:var(--accent);font-size:14px;margin-top:4px;}
+  .modal-specs{display:flex;flex-wrap:wrap;gap:16px;padding:8px 0 0;width:100%;}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:26px;line-height:1;cursor:pointer;
+                padding:2px 6px;border-radius:3px;transition:.15s;}
+    .modal-close:hover{color:var(--text);background:var(--panel2);}
+  .modal-hero{position:relative;border-bottom:1px solid var(--border);background:#000;margin-bottom:12px;}
+  .modal-hero img{width:100%;max-height:300px;object-fit:contain;display:block;background:var(--bg);cursor:zoom-in;}
+  /* fullscreen lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:flex;
+           align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s;}
+  .lightbox.open{opacity:1;pointer-events:auto;}
+  .lightbox img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;}
+  .lightbox-close{position:absolute;top:18px;right:22px;background:none;border:none;color:#fff;font-size:34px;
+                 line-height:1;cursor:pointer;padding:4px 10px;border-radius:4px;transition:.15s;}
+  .lightbox-close:hover{background:rgba(255,255,255,.15);}
+  .modal-body{padding:0 24px 18px;}
+  .modal-specs .spec b{font-size:20px;color:var(--text);}
+  .modal-specs .price-spec{margin-right:auto;}
+  .modal-specs .price-spec b{font-size:30px;font-weight:700;color:var(--text);}
+  .modal-specs .spec{color:var(--muted);font-size:13px;}
+  .modal-mapsec{padding:0;}
+  #modalMap{height:320px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);}
+  .modal-actions{display:flex;justify-content:flex-end;padding:0 24px 24px;}
+  .modal-actions .btn{flex:none;padding:9px 20px;font-size:14px;border-radius:5px;}
+  @media(max-width:1100px){ .layout{grid-template-columns:1fr;} #map{height:420px;height:60vh;position:sticky;top:20px;} .mapSide{position:static;} .modal-hero img{height:240px;} }
   @media(max-width:520px){ h1{font-size:19px;} }
   </style>
 </head>
@@ -160,7 +194,39 @@
   </footer>
 </div>
 
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">
+        <div class="addr" id="mAddr"></div>
+      </div>
+      <button class="modal-close" id="mClose" aria-label="Close">&times;</button>
+      <div class="modal-specs">
+        <span class="spec price-spec"><b id="mPrice"></b></span>
+        <span class="spec"><b id="mBed"></b><br>Beds</span>
+        <span class="spec"><b id="mBath"></b><br>Baths</span>
+        <span class="spec"><b id="mSf"></b><br>SqFt</span>
+      </div>
+    </div>
+    <div class="modal-hero">
+      <img id="mImg" alt="">
+    </div>
+    <div class="modal-body">
+      <div class="modal-mapsec">
+        <div id="modalMap"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <a class="btn btn-primary" id="mListing" href="#" target="_blank" rel="noopener">View Listing</a>
+      <a class="btn btn-ghost" id="mSource" href="#" target="_blank" rel="noopener">Source</a>
+    </div>
+  </div>
+</div>
 
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lightbox-close" id="lbClose" aria-label="Close">&times;</button>
+  <img id="lbImg" alt="">
+</div>
 
 <script>
 const HOMES = [
@@ -489,37 +555,68 @@ function showMarkers(filter){
   }
 }
 
-/* ---------- "See on map" (highlight a home on the main map) ---------- */
-let mapMarkAddr = null;
-function seeOnMap(h){
-  setHoverMarkers(null);
-  // clear any previous highlight
-  if(mapMarkAddr && markers[mapMarkAddr]){
-    const prev = markers[mapMarkAddr];
-    prev.setIcon(prev._baseIcon || townIcon(TOWN_COLOR[prev._town]||"#8ab4d8", {active:activeFilter!=="All"}));
-    prev.setZIndexOffset(0);
-  }
-  const mk = markers[h.addr];
-  if(!mk) return;
-  mk._town = h.town;
-  // raise + outline the marker like a hover
-  mk.setIcon(townIcon(h.town, {hover:true}));
-  mk.setZIndexOffset(1000);
-  mapMarkAddr = h.addr;
-  // bring the map into view, then zoom + open the same tooltip as the main map
-  document.getElementById("map").scrollIntoView({behavior:"smooth", block:"nearest"});
-  setTimeout(()=>{
-    map.flyTo([h.lat,h.lng], 14, {duration:.7});
-    setTimeout(()=> mk.openPopup(), 300);
-  }, 80);
+/* ---------- Listing modal ---------- */
+const overlay = document.getElementById("overlay");
+function buildModalMap(){
+  const m = L.map("modalMap", {scrollWheelZoom:false});
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+    maxZoom:20, subdomains:"abcd",
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  }).addTo(m);
+  return m;
 }
-document.getElementById("map").addEventListener("popupclose", ()=>{
-  if(mapMarkAddr && markers[mapMarkAddr]){
-    const mk = markers[mapMarkAddr];
-    mk.setIcon(mk._baseIcon || townIcon(TOWN_COLOR[mk._town]||"#8ab4d8", {active:activeFilter!=="All"}));
-    mk.setZIndexOffset(0);
-    mapMarkAddr = null;
-  }
+let modalMap = null, modalMarker = null;
+function openModal(h){
+  document.getElementById("mImg").src = h.img;
+  document.getElementById("mImg").alt = fullAddr(h);
+  document.getElementById("mAddr").textContent = fullAddr(h);
+  document.getElementById("mPrice").textContent = fmt(h.price);
+  document.getElementById("mBed").textContent = h.bed;
+  document.getElementById("mBath").textContent = h.bath;
+  document.getElementById("mSf").textContent = h.sf.toLocaleString();
+  document.getElementById("mListing").href = h.url;
+  document.getElementById("mSource").href = "https://" + h.src;
+  if(!modalMap) modalMap = buildModalMap();
+  modalMap.setView([h.lat,h.lng], 14);
+  if(modalMarker) modalMarker.remove();
+  modalMarker = L.marker([h.lat,h.lng], {icon:townIcon(h.town)})
+    .addTo(modalMap).bindPopup("<b>"+h.addr+"</b>").openPopup();
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+  setTimeout(()=>modalMap.invalidateSize(), 50);
+}
+function closeModal(){
+  overlay.classList.remove("open");
+  document.body.style.overflow = "";
+}
+overlay.addEventListener("click", e=>{
+  if(e.target===overlay || e.target.closest(".modal-close")) closeModal();
+});
+
+/* ---------- Fullscreen lightbox ---------- */
+const lightbox = document.getElementById("lightbox");
+const lbImg = document.getElementById("lbImg");
+const mImg = document.getElementById("mImg");
+function openLightbox(){
+  lbImg.src = mImg.src;
+  lbImg.alt = mImg.alt;
+  lightbox.classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeLightbox(){
+  lightbox.classList.remove("open");
+  if(!overlay.classList.contains("open")) document.body.style.overflow = "";
+}
+mImg.addEventListener("click", e=>{
+  if(!overlay.classList.contains("open")) return; // only while the modal is open
+  openLightbox();
+});
+document.getElementById("lbClose").addEventListener("click", closeLightbox);
+lightbox.addEventListener("click", e=>{ if(e.target===lightbox) closeLightbox(); });
+document.addEventListener("keydown", e=>{
+  if(e.key !== "Escape") return;
+  if(lightbox.classList.contains("open")){ closeLightbox(); }
+  else if(overlay.classList.contains("open")){ closeModal(); }
 });
 
 function render(filter){
@@ -556,14 +653,12 @@ function render(filter){
           <span><b>${h.bath}</b> Baths</span>
           <span><b>${h.sf.toLocaleString()}</b> SqFt</span>
         </div>
-        <div class="btns">
-          <a class="btn btn-primary" href="${h.url}" target="_blank" rel="noopener">Listing</a>
-          <button type="button" class="btn btn-ghost see-on-map">See on map</button>
-        </div>
       </div>`;
     el.addEventListener("click", (ev)=>{
-      if(ev.target.closest(".see-on-map")){ seeOnMap(h); return; }
-      if(ev.target.closest("a")) return;      // don't intercept the Listing link
+      if(ev.target.closest("a")) return;      // don't intercept links
+      openModal(h);
+      document.querySelectorAll(".card.hl").forEach(c=>c.classList.remove("hl"));
+            el.classList.add("hl");
     });
     el.addEventListener("mouseenter", ()=> setHoverMarkers(h.addr));
     el.addEventListener("mouseleave", ()=> setHoverMarkers(null));
