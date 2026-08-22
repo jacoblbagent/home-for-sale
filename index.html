@@ -42,11 +42,15 @@
     border-radius:3px;padding:6px 8px;font-size:13px;cursor:pointer;font-family:inherit;}
   .page-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
   .page-btn{border:1px solid var(--border);background:var(--panel);color:var(--muted);
-        padding:6px 12px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s;}
+        padding:6px 12px;border-radius:4px;cursor:pointer;font-size:13px;transition:.15s;}
   .page-btn:hover{color:var(--text);}
   .page-btn.active{background:var(--accent);border-color:var(--accent);color:#0c0e12;font-weight:600;}
   .page-btn:disabled{opacity:.4;cursor:default;}
   .page-info{font-size:13px;color:var(--muted);margin:0 6px;white-space:nowrap;}
+  .page-ellipsis{color:var(--muted);padding:0 2px;}
+  .page-jump{display:flex;align-items:center;gap:6px;margin-left:8px;}
+  .page-jump input{width:52px;background:var(--panel);color:var(--text);border:1px solid var(--border);
+        border-radius:4px;padding:5px 7px;font-size:13px;font-family:inherit;}
   .chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);
         padding:7px 14px;border-radius:4px;cursor:pointer;font-size:13px;transition:.15s;}
   .chip:hover{color:var(--text);}
@@ -664,17 +668,45 @@ function drawPagination(totalPages, totalItems){
   const to = Math.min(page*p, totalItems);
   let s = `<span class="page-info">${from}–${to} of ${totalItems}</span>`;
   s += `<button class="page-btn" data-goto="${page-1}" ${page===1?'disabled':''}>‹ Prev</button>`;
-  for(let i=1;i<=totalPages;i++){
-    s += `<button class="page-btn ${i===page?'active':''}" data-goto="${i}">${i}</button>`;
+  // first page
+  s += `<button class="page-btn ${page===1?'active':''}" data-goto="1">1</button>`;
+  // context: show current page if it's somewhere in the middle
+  if(page > 1 && page < totalPages){
+    if(page > 2) s += `<span class="page-ellipsis">…</span>`;
+    s += `<button class="page-btn active" data-goto="${page}">${page}</button>`;
+    if(page < totalPages-1) s += `<span class="page-ellipsis">…</span>`;
+  } else if(page > 1 && page > 2){
+    s += `<span class="page-ellipsis">…</span>`;
   }
+  // last page
+  s += `<button class="page-btn ${page===totalPages?'active':''}" data-goto="${totalPages}">${totalPages}</button>`;
   s += `<button class="page-btn" data-goto="${page+1}" ${page===totalPages?'disabled':''}>Next ›</button>`;
+  // jump-to-page so any in-between page is still choosable
+  s += `<span class="page-jump"><input id="pageJump" type="number" min="1" max="${totalPages}" value="${page}" aria-label="Jump to page"><button class="page-btn" id="pageGo">Go</button></span>`;
   pc.innerHTML = s;
 }
 document.getElementById("pagination").addEventListener("click", e=>{
   const btn = e.target.closest(".page-btn");
+  if(btn && btn.id === "pageGo"){
+    const inp = document.getElementById("pageJump");
+    const v = parseInt(inp.value, 10);
+    const max = parseInt(inp.max, 10) || 1;
+    if(v >= 1 && v <= max){ page = v; render(activeFilter); }
+    else inp.value = page;
+    return;
+  }
   if(!btn || btn.disabled) return;
   page = parseInt(btn.dataset.goto, 10);
   render(activeFilter);
+});
+document.getElementById("pagination").addEventListener("keydown", e=>{
+  if(e.target && e.target.id === "pageJump" && e.key === "Enter"){
+    const inp = e.target;
+    const v = parseInt(inp.value, 10);
+    const max = parseInt(inp.max, 10) || 1;
+    if(v >= 1 && v <= max){ page = v; render(activeFilter); }
+    else inp.value = page;
+  }
 });
 document.getElementById("perPage").addEventListener("change", e=>{
   page = 1;
