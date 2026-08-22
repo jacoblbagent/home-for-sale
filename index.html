@@ -18,10 +18,10 @@
   .wrap{max-width:1280px;margin:0 auto;padding:28px 20px 60px;}
   header{border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:26px;}
   h1{font-size:30px;font-weight:700;margin:8px 0 6px;}
-  .stats{display:flex;gap:26px;margin-top:20px;flex-wrap:wrap;}
-  .stat .n{font-size:26px;font-weight:700;}
-  .stat .l{font-size:12px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
-  .filters{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 22px;}
+  .filterbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:0 0 22px;}
+  .homesCount{font-size:15px;color:var(--muted);white-space:nowrap;}
+  .homesCount span{color:var(--text);font-weight:700;font-size:18px;}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;}
   .chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);
         padding:7px 14px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s;}
   .chip:hover{color:var(--text);}
@@ -74,20 +74,17 @@
 <div class="wrap">
   <header>
     <h1>For Sale in: Brevard · Arden · Fletcher · South Asheville / Bent Creek</h1>
-    <div class="stats">
-      <div class="stat"><div class="n" id="statCount">—</div><div class="l">Homes Listed</div></div>
-      <div class="stat"><div class="n">≤ $400K</div><div class="l">Price Cap</div></div>
-      <div class="stat"><div class="n">2–3</div><div class="l">Bedrooms</div></div>
-      <div class="stat"><div class="n" id="statAreas">—</div><div class="l">Areas</div></div>
-    </div>
   </header>
 
-  <div class="filters" id="filters">
-    <button class="chip active" data-town="All">All Areas</button>
-    <button class="chip" data-town="Brevard">Brevard</button>
-    <button class="chip" data-town="Fletcher">Fletcher</button>
-    <button class="chip" data-town="Arden">Arden</button>
-    <button class="chip" data-town="Bent Creek">Bent Creek / S. Asheville</button>
+  <div class="filterbar">
+    <div class="homesCount"><span id="statCount">—</span> homes listed</div>
+    <div class="filters" id="filters">
+      <button class="chip active" data-town="All">All Areas</button>
+      <button class="chip" data-town="Brevard">Brevard</button>
+      <button class="chip" data-town="Fletcher">Fletcher</button>
+      <button class="chip" data-town="Arden">Arden</button>
+      <button class="chip" data-town="Bent Creek">Bent Creek / S. Asheville</button>
+    </div>
   </div>
 
   <div class="layout">
@@ -247,8 +244,6 @@ function render(filter){
   const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
   grid.innerHTML = "";
   statCount.textContent = list.length;
-  const areas = document.getElementById("statAreas");
-  if(areas){ areas.textContent = new Set(list.map(h=>h.town)).size; }
   // sync map markers to filter + color by town
   showMarkers(filter);
   if(!list.length){
