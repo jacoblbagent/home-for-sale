@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WNC Homes Under $400K · 2–3 Bedroom</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#181b22; --panel2:#1e222b; --border:#2b303b;
+    --text:#e8eaf0; --muted:#9aa3b2; --accent:#8ab4d8; --gold:#c9a06a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;}
+  .wrap{max-width:1240px;margin:0 auto;padding:28px 20px 60px;}
+  header{border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:26px;}
+  .kicker{color:var(--accent);font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;}
+  h1{font-size:30px;font-weight:700;margin:8px 0 6px;}
+  .sub{color:var(--muted);max-width:760px;font-size:15px;}
+  .stats{display:flex;gap:26px;margin-top:20px;flex-wrap:wrap;}
+  .stat .n{font-size:26px;font-weight:700;}
+  .stat .l{font-size:12px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;}
+  .filters{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 22px;}
+  .chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);
+        padding:7px 14px;border-radius:999px;cursor:pointer;font-size:13px;transition:.15s;}
+  .chip:hover{color:var(--text);}
+  .chip.active{background:var(--accent);border-color:var(--accent);color:#0c0e12;font-weight:600;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+        display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
+  .ph{position:relative;aspect-ratio:16/10;background:var(--panel2);overflow:hidden;}
+  .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
+  .card:hover .ph img{transform:scale(1.04);}
+  .price{position:absolute;top:12px;left:12px;background:rgba(10,12,16,.82);backdrop-filter:blur(4px);
+         color:#fff;font-size:19px;font-weight:700;padding:5px 12px;border-radius:8px;}
+  .badge{position:absolute;top:12px;right:12px;background:rgba(10,12,16,.82);color:var(--muted);
+         font-size:12px;padding:4px 10px;border-radius:8px;border:1px solid var(--border);}
+  .body{padding:16px 16px 18px;display:flex;flex-direction:column;flex:1;}
+  .addr{font-size:16px;font-weight:600;line-height:1.3;}
+  .town{color:var(--accent);font-size:13px;margin-top:3px;}
+  .specs{display:flex;gap:16px;margin:14px 0;color:var(--muted);font-size:13.5px;}
+  .spec b{color:var(--text);font-weight:600;}
+  .btns{margin-top:auto;display:flex;gap:10px;}
+  .btn{flex:1;text-align:center;padding:9px 0;border-radius:8px;font-size:13.5px;font-weight:600;text-decoration:none;transition:.15s;}
+  .btn-primary{background:var(--accent);color:#0c0e13;}
+  .btn-primary:hover{filter:brightness(1.09);}
+  .btn-ghost{border:1px solid var(--border);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .empty{grid-column:1/-1;text-align:center;padding:60px 0;color:var(--muted);}
+  footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);
+         font-size:12.5px;line-height:1.6;}
+  footer a{color:var(--accent);}
+  @media(max-width:520px){ h1{font-size:24px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">For Sale Now</div>
+    <h1>Brevard · Arden · Fletcher · South Asheville / Bent Creek</h1>
+    <p class="sub">Real, active MLS listings in western North Carolina — 2 to 3 bedrooms, priced at
+      or under $400,000. Photos and details pulled directly from the listing source.
+      Prices are current asking prices and can change without notice.</p>
+    <div class="stats">
+      <div class="stat"><div class="n" id="statCount">—</div><div class="l">Homes Listed</div></div>
+      <div class="stat"><div class="n">≤ $400K</div><div class="l">Price Cap</div></div>
+      <div class="stat"><div class="n">2–3</div><div class="l">Bedrooms</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">Areas</div></div>
+    </div>
+  </header>
+
+  <div class="filters" id="filters">
+    <button class="chip active" data-town="All">All Areas</button>
+    <button class="chip" data-town="Brevard">Brevard</button>
+    <button class="chip" data-town="Fletcher">Fletcher</button>
+    <button class="chip" data-town="Arden">Arden</button>
+    <button class="chip" data-town="Bent Creek">Bent Creek / S. Asheville</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <p>Listing data &amp; photos served from the Canopy MLS feed via
+       <a href="https://mymosaicrealty.com" target="_blank" rel="noopener">Mosaic Realty (Asheville)</a> and
+       <a href="https://nc-realty.com" target="_blank" rel="noopener">Noble &amp; Company Realty</a>.
+       Each card links to the original listing page. Prices subject to change; verify with your agent
+       before making an offer. This page is a locally-generated reference, not an official brokerage service.</p>
+  </footer>
+</div>
+
+<script>
+const HOMES = [
+  {price:394000,bed:3,bath:3,sf:1615,town:"Arden",addr:"202 Southern Charm Rd",
+   src:"mymosaicrealty.com",img:"images/southerncharms.webp",
+   url:"https://mymosaicrealty.com/property/202-southern-charm-road-arden-nc-28704/108504026/"},
+  {price:389000,bed:3,bath:2,sf:1456,town:"Bent Creek / S. Asheville",addr:"195 Shiloh Road",src:"mymosaicrealty.com",
+   img:"images/shiloh.webp",url:"https://mymosaicrealty.com/property/195-shiloh-road-asheville-nc-28803/108498948/"},
+  {price:380000,bed:3,bath:2,sf:1650,town:"Brevard",addr:"98 New Sorrells Estate",
+   src:"nc-realty.com",img:"images/sorrells.webp",url:"https://nc-realty.com/listing/CAR4414087/98-new-sorrells-estate-brevard-nc-28712/"},
+  {price:375000,bed:3,bath:2,sf:876,town:"Arden",addr:"17 Azalea Road",src:"mymosaicrealty.com",
+   img:"images/azalea.webp",url:"https://mymosaicrealty.com/property/17-azalea-road-arden-nc-28704/107927914/"},
+  {price:360000,bed:3,bath:2,sf:1029,town:"Arden",addr:"13 Mallard Run Drive",src:"mymosaicrealty.com",
+   img:"images/mallard.webp",url:"https://mymosaicrealty.com/property/13-mallard-run-drive-arden-nc-28704/108114615/"},
+  {price:350000,bed:3,bath:2,sf:1332,town:"Fletcher",addr:"318 Souther Road",src:"mymosaicrealty.com",
+   img:"images/souther.webp",url:"https://mymosaicrealty.com/property/318-souther-road-fletcher-nc-28732/108456233/"},
+  {price:345900,bed:3,bath:3,sf:1946,town:"Brevard",addr:"119 Downing Park Court, Unit E",
+   src:"nc-realty.com",img:"images/downing.webp",url:"https://nc-realty.com/listing/CAR4416266/119-downing-park-court-brevard-nc-28712/"},
+  {price:334890,bed:3,bath:3,sf:1699,town:"Fletcher",addr:"175 Valley Breeze Road",src:"mymosaicrealty.com",
+   img:"images/valleybreeze.webp",url:"https://mymosaicrealty.com/property/175-valley-breeze-road-fletcher-nc-28732/108489949/"},
+  {price:324900,bed:2,bath:2,sf:1274,town:"Fletcher",addr:"123 Lanceford Circle",src:"mymosaicrealty.com",
+   img:"images/lanceford.webp",url:"https://mymosaicrealty.com/property/123-lanceford-circle-fletcher-nc-28732/108417187/"},
+  {price:299000,bed:3,bath:2,sf:1494,town:"Bent Creek / S. Asheville",addr:"49 Spivey Mountain Road",src:"mymosaicrealty.com",
+   img:"images/spivey.webp",url:"https://mymosaicrealty.com/property/49-spivey-mountain-road-asheville-nc-28806/106530372/"},
+  {price:296000,bed:2,bath:2,sf:957,town:"Fletcher",addr:"875 Mills Gap Road",src:"mymosaicrealty.com",
+   img:"images/millsgap.webp",url:"https://mymosaicrealty.com/property/875-mills-gap-road-fletcher-nc-28732/108447160/"},
+  {price:275000,bed:2,bath:2,sf:973,town:"Arden",addr:"203 Rocky Mountain Way",src:"mymosaicrealty.com",
+   img:"images/rocky.webp",url:"https://mymosaicrealty.com/property/203-rocky-mountain-way-arden-nc-28704/101332772/"},
+  {price:275000,bed:3,bath:3,sf:1680,town:"Bent Creek / S. Asheville",addr:"103 Pebble Creek Drive",src:"mymosaicrealty.com",
+   img:"images/pebble.webp",url:"https://mymosaicrealty.com/property/103-pebble-creek-drive-asheville-nc-28803/97875815/"}
+];
+
+const fmt = p => "$" + p.toLocaleString("en-US");
+const grid = document.getElementById("grid");
+const statCount = document.getElementById("statCount");
+
+function render(filter){
+  const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
+  grid.innerHTML = "";
+  statCount.textContent = list.length;
+  if(!list.length){
+    grid.innerHTML = '<div class="empty">No matching homes in this area right now.</div>';
+    return;
+  }
+  list.forEach(h=>{
+    const el = document.createElement("div");
+    el.className = "card";
+    el.innerHTML = `
+      <div class="ph">
+        <img loading="lazy" src="${h.img}" alt="${h.addr}, ${h.town}">
+        <span class="price">${fmt(h.price)}</span>
+        <span class="badge">${h.town}</span>
+      </div>
+      <div class="body">
+        <div class="addr">${h.addr}</div>
+        <div class="town">${h.town}</div>
+        <div class="specs">
+          <span><b>${h.bed}</b> Beds</span>
+          <span><b>${h.bath}</b> Baths</span>
+          <span><b>${h.sf.toLocaleString()}</b> SqFt</span>
+        </div>
+        <div class="btns">
+          <a class="btn btn-primary" href="${h.url}" target="_blank" rel="noopener">View Listing</a>
+          <a class="btn btn-ghost" href="${h.src}" target="_blank" rel="noopener">Source</a>
+        </div>
+      </div>`;
+    grid.appendChild(el);
+  });
+}
+
+document.getElementById("filters").addEventListener("click", e=>{
+  const chip = e.target.closest(".chip");
+  if(!chip) return;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
+  chip.classList.add("active");
+  render(chip.dataset.town);
+});
+
+render("All");
+</script>
+</body>
+</html>
