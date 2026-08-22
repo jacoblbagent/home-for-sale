@@ -1,6 +1,6 @@
-# Home for Sale — WNC Homes Under $400K
+# Home for Sale — WNC Homes Under $375K
 
-A fast, single-file reference site for home listings in Western North Carolina. It surfaces **140 live homes under $400K** (2–3 bedroom) across **Brevard · Arden · Fletcher · South Asheville / Bent Creek**, each with a photo, price, specs, and a link back to the original brokerage listing — plus an interactive Leaflet map.
+A fast, single-file reference site for home listings in Western North Carolina. It surfaces **104 live homes under $375K** (2–3 bedroom) across **Brevard · Arden · Fletcher · South Asheville / Bent Creek**, each with a photo, price, specs, and a link back to the original brokerage listing — plus an interactive Leaflet map.
 
 Private GitHub Pages site, built locally from the Canopy MLS feeds.
 
@@ -13,8 +13,9 @@ Private GitHub Pages site, built locally from the Canopy MLS feeds.
 - **Interactive Leaflet map** (OpenStreetMap) that spans the window height on desktop, synced with the card grid
 - **Area filter chips** — filter by area or view all; markers recolor, and the selected area is outlined while others dim but stay visible for location context
 - **Sort dropdown** — price / beds / sq ft, ascending or descending; combines with the area filter
-- **Card ↔ map sync** — click a card to focus & pop its marker; click a marker for a listing popup with photo and specs
+- **Map ↔ grid sync** — the side map's markers recolor/cluster with the active filter; clicking a marker shows a popup preview, and the map stays in lockstep with the grid
 - **Terse chrome** — small border radii, live home count inline with the filters (no separate stats row), minimal header
+- Clicking a card opens a **listing modal** with the full spec, a location map pinned to the home, and a **Source** button linking to the broker
 - Each card's **Source** button opens the original brokerage listing page
 - Dark, clean UI, fully responsive down to mobile
 
@@ -22,11 +23,11 @@ Private GitHub Pages site, built locally from the Canopy MLS feeds.
 
 | Area | Listings |
 |------|----------|
-| Fletcher | 54 |
-| Arden | 40 |
-| Brevard | 34 |
-| Bent Creek / S. Asheville | 12 |
-| **Total** | **140** |
+| Fletcher | 47 |
+| Arden | 30 |
+| Brevard | 18 |
+| Bent Creek / S. Asheville | 9 |
+| **Total** | **104** |
 
 ## How it works
 
