@@ -122,11 +122,10 @@
   .modal-specs .price-spec{margin-right:auto;}
   .modal-specs .price-spec b{font-size:30px;font-weight:700;color:var(--text);}
   .modal-specs .spec{color:var(--muted);font-size:13px;}
-  .modal-mapsec{padding:0;}
+  .modal-mapsec{margin-top:16px;}
   #modalMap{height:320px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 24px;position:sticky;bottom:0;z-index:5;background:var(--panel);border-top:1px solid var(--border);}
   .modal-actions .btn{flex:none;padding:9px 20px;font-size:14px;border-radius:5px;}
-  .distsec{margin-top:16px;}
   .dist-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;}
   .dist-table{width:100%;border-collapse:collapse;font-size:13px;}
   .dist-table th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:6px 10px;border-bottom:1px solid var(--border);}
@@ -221,9 +220,6 @@
       <img id="mImg" alt="">
     </div>
     <div class="modal-body">
-      <div class="modal-mapsec">
-        <div id="modalMap"></div>
-      </div>
       <div class="distsec">
         <div class="dist-title">Ride distance from this home</div>
         <table class="dist-table">
@@ -232,6 +228,9 @@
           </thead>
           <tbody id="mDistBody"></tbody>
         </table>
+      </div>
+      <div class="modal-mapsec">
+        <div id="modalMap"></div>
       </div>
     </div>
     <div class="modal-actions">
