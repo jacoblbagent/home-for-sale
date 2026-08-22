@@ -105,7 +105,7 @@
   .modal-title .town{color:var(--accent);font-size:14px;margin-top:4px;}
   .modal-specs{display:flex;flex-wrap:wrap;gap:16px;padding:8px 0 0;width:100%;}
     .modal-close{background:none;border:none;color:var(--muted);font-size:26px;line-height:1;cursor:pointer;
-                padding:2px 6px;border-radius:3px;transition:.15s;}
+                padding:2px 6px;border-radius:3px;transition:.15s;position:sticky;top:0;z-index:5;background:var(--panel);}
     .modal-close:hover{color:var(--text);background:var(--panel2);}
   .modal-hero{position:relative;border-bottom:1px solid var(--border);background:#000;margin-bottom:12px;}
   .modal-hero img{width:100%;max-height:300px;object-fit:contain;display:block;background:var(--bg);cursor:zoom-in;}
@@ -124,8 +124,8 @@
   .modal-specs .spec{color:var(--muted);font-size:13px;}
   .modal-mapsec{padding:0;}
   #modalMap{height:320px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);}
-  .modal-actions{display:flex;justify-content:flex-end;padding:0 24px 24px;}
-  .modal-actions .btn{flex:none;padding:9px 20px;font-size:14px;border-radius:5px;margin-left:8px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 24px;position:sticky;bottom:0;z-index:5;background:var(--panel);border-top:1px solid var(--border);}
+  .modal-actions .btn{flex:none;padding:9px 20px;font-size:14px;border-radius:5px;}
   .distsec{margin-top:16px;}
   .dist-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;}
   .dist-table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -619,7 +619,7 @@ function openModal(h){
   modalMap.setView([h.lat,h.lng], 14);
   if(modalMarker) modalMarker.remove();
   modalMarker = L.marker([h.lat,h.lng], {icon:townIcon(h.town)})
-    .addTo(modalMap).bindPopup("<b>"+h.addr+"</b>").openPopup();
+    .addTo(modalMap).bindPopup("<b>"+h.addr+"</b>");
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
   setTimeout(()=>modalMap.invalidateSize(), 50);
