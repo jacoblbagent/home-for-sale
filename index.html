@@ -163,7 +163,6 @@
     <div class="modal-head">
       <div class="modal-title">
         <div class="addr" id="mAddr"></div>
-        <div class="town" id="mTown"></div>
       </div>
       <button class="modal-close" id="mClose" aria-label="Close">&times;</button>
     </div>
@@ -407,6 +406,7 @@ const HOMES = [
 ];
 
 const fmt = p => "$" + p.toLocaleString("en-US");
+const fullAddr = h => `${h.addr}, ${h.town}, NC`;
 const grid = document.getElementById("grid");
 const statCount = document.getElementById("statCount");
 
@@ -532,9 +532,8 @@ function buildModalMap(){
 let modalMap = null, modalMarker = null;
 function openModal(h){
   document.getElementById("mImg").src = h.img;
-  document.getElementById("mImg").alt = h.addr + ", " + h.town;
-  document.getElementById("mAddr").textContent = h.addr;
-  document.getElementById("mTown").textContent = h.town;
+  document.getElementById("mImg").alt = fullAddr(h);
+  document.getElementById("mAddr").textContent = fullAddr(h);
   document.getElementById("mPrice").textContent = fmt(h.price);
   document.getElementById("mBadge").textContent = h.town;
   document.getElementById("mBed").textContent = h.bed;
@@ -607,7 +606,7 @@ function render(filter){
         <span class="badge">${h.town}</span>
       </div>
       <div class="body">
-        <div class="addr">${h.addr}</div>
+        <div class="addr">${fullAddr(h)}</div>
         <div class="specs">
           <span><b>${h.bed}</b> Beds</span>
           <span><b>${h.bath}</b> Baths</span>
