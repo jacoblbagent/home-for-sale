@@ -412,7 +412,7 @@ const statCount = document.getElementById("statCount");
 /* ---------- Leaflet map ---------- */
 const map = L.map("map", {scrollWheelZoom:true}).setView([35.43,-82.55], 10);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  maxZoom:18, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+  maxZoom:18, referrerPolicy:'origin', attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
 }).addTo(map);
 
 const TOWN_COLOR = {
@@ -522,7 +522,7 @@ const overlay = document.getElementById("overlay");
 function buildModalMap(){
   const m = L.map("modalMap", {scrollWheelZoom:false});
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    maxZoom:18, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+    maxZoom:18, referrerPolicy:'origin', attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
   }).addTo(m);
   return m;
 }
