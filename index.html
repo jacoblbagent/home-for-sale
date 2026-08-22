@@ -412,8 +412,9 @@ const statCount = document.getElementById("statCount");
 
 /* ---------- Leaflet map ---------- */
 const map = L.map("map", {scrollWheelZoom:true}).setView([35.43,-82.55], 10);
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-  maxZoom:18, referrerPolicy:'origin', attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+  maxZoom:20, subdomains:"abcd",
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map);
 
 const TOWN_COLOR = {
@@ -522,8 +523,9 @@ function showMarkers(filter){
 const overlay = document.getElementById("overlay");
 function buildModalMap(){
   const m = L.map("modalMap", {scrollWheelZoom:false});
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    maxZoom:18, referrerPolicy:'origin', attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> contributors'
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+    maxZoom:20, subdomains:"abcd",
+    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
   }).addTo(m);
   return m;
 }
