@@ -610,10 +610,6 @@ function render(filter){
           <span><b>${h.bath}</b> Baths</span>
           <span><b>${h.sf.toLocaleString()}</b> SqFt</span>
         </div>
-        <div class="btns">
-          <a class="btn btn-primary" href="${h.url}" target="_blank" rel="noopener">View Listing</a>
-          <a class="btn btn-ghost" href="https://${h.src}" target="_blank" rel="noopener">Source</a>
-        </div>
       </div>`;
     el.addEventListener("click", (ev)=>{
       if(ev.target.closest("a")) return;      // don't intercept links
