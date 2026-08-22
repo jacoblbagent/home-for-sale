@@ -20,8 +20,8 @@
   h1{font-size:30px;font-weight:700;margin:8px 0 6px;}
   .filterbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:0 0 22px;min-width:0;width:100%;}
   .list-col{min-width:0;}
-  .homesCount{font-size:15px;color:var(--muted);white-space:nowrap;}
-  .homesCount span{color:var(--text);font-weight:700;font-size:18px;}
+  .homesCount{font-size:12.5px;color:var(--muted);white-space:nowrap;}
+  .homesCount span{color:var(--muted);font-weight:600;font-size:12.5px;}
   .filters-wrap{position:relative;}
   .filter-toggle{width:34px;height:34px;display:flex;align-items:center;justify-content:center;
         background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:4px;
@@ -148,12 +148,12 @@
     </div>
     <div class="homesCount"><span id="statCount">—</span> Listings</div>
     <select id="sortSel" class="sort-sel">
-      <option value="price-desc" selected>Price: High to Low</option>
-      <option value="price-asc">Price: Low to High</option>
-      <option value="beds-desc">Bedrooms: High to Low</option>
-      <option value="beds-asc">Bedrooms: Low to High</option>
-      <option value="sf-desc">Square Feet: High to Low</option>
-      <option value="sf-asc">Square Feet: Low to High</option>
+      <option value="price-desc" selected>↓ Price</option>
+      <option value="price-asc">↑ Price</option>
+      <option value="beds-desc">↓ Bedrooms</option>
+      <option value="beds-asc">↑ Bedrooms</option>
+      <option value="sf-desc">↓ Square Feet</option>
+      <option value="sf-asc">↑ Square Feet</option>
     </select>
   </div>
       <div class="grid" id="grid"></div>
