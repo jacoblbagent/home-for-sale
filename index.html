@@ -18,7 +18,7 @@
   .wrap{max-width:1280px;margin:0 auto;padding:28px 20px 60px;}
   header{margin-bottom:22px;}
   h1{font-size:30px;font-weight:700;margin:8px 0 6px;}
-  .filterbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:0 0 22px;min-width:0;width:100%;}
+  .filterbar{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;margin:0 0 10px;min-width:0;width:100%;}
   .list-col{min-width:0;}
   .homesCount{font-size:12.5px;color:var(--muted);white-space:nowrap;}
   .homesCount span{color:var(--muted);font-weight:600;font-size:12.5px;}
@@ -33,6 +33,9 @@
         border-radius:6px;padding:10px;min-width:200px;}
   .filters.open{display:flex;}
   .filters .chip{width:100%;text-align:left;}
+  .filters-divider{height:1px;background:var(--border);margin:4px 0;}
+  .price-sel{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);
+        border-radius:4px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:inherit;}
   .homesCount+.sort-sel, .sort-sel{margin-left:auto;background:var(--panel);color:var(--text);border:1px solid var(--border);
     border-radius:3px;padding:5px 8px;font-size:12px;cursor:pointer;font-family:inherit;}
   .pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 4px;flex-wrap:wrap;}
@@ -48,9 +51,6 @@
   .page-btn:disabled{opacity:.4;cursor:default;}
   .page-info{font-size:13px;color:var(--muted);margin:0 6px;white-space:nowrap;}
   .page-ellipsis{color:var(--muted);padding:0 2px;}
-  .page-jump{display:flex;align-items:center;gap:6px;margin-left:8px;}
-  .page-jump input{width:52px;background:var(--panel);color:var(--text);border:1px solid var(--border);
-        border-radius:4px;padding:5px 7px;font-size:13px;font-family:inherit;}
   .chip{border:1px solid var(--border);background:var(--panel);color:var(--muted);
         padding:7px 14px;border-radius:4px;cursor:pointer;font-size:13px;transition:.15s;}
   .chip:hover{color:var(--text);}
@@ -108,7 +108,7 @@
                 padding:2px 6px;border-radius:3px;transition:.15s;}
     .modal-close:hover{color:var(--text);background:var(--panel2);}
   .modal-hero{position:relative;border-bottom:1px solid var(--border);background:#000;}
-  .modal-hero img{width:100%;max-height:300px;object-fit:contain;display:block;background:#000;cursor:zoom-in;}
+  .modal-hero img{width:100%;max-height:300px;object-fit:contain;display:block;background:var(--bg);cursor:zoom-in;}
   /* fullscreen lightbox */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:flex;
            align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s;}
@@ -132,9 +132,6 @@
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>For Sale in: Brevard · Arden · Fletcher · South Asheville / Bent Creek</h1>
-  </header>
 <div class="layout">
     <div class="list-col">
   <div class="filterbar">
@@ -148,9 +145,17 @@
         <button class="chip" data-town="Fletcher">Fletcher</button>
         <button class="chip" data-town="Arden">Arden</button>
         <button class="chip" data-town="Bent Creek">Bent Creek / S. Asheville</button>
+        <div class="filters-divider"></div>
+        <select id="priceFilter" class="price-sel">
+          <option value="all" selected>Any price</option>
+          <option value="200">Under $200K</option>
+          <option value="250">$200K – $250K</option>
+          <option value="300">$250K – $300K</option>
+          <option value="375">$300K – $375K</option>
+        </select>
       </div>
+      <div class="homesCount"><span id="statCount">—</span> Listings</div>
     </div>
-    <div class="homesCount"><span id="statCount">—</span> Listings</div>
     <select id="sortSel" class="sort-sel">
       <option value="price-desc" selected>↓ Price</option>
       <option value="price-asc">↑ Price</option>
@@ -166,8 +171,8 @@
       <div class="pp-wrap">
         <label for="perPage">Show</label>
         <select id="perPage">
-          <option value="12">12</option>
-          <option value="24" selected>24</option>
+          <option value="12" selected>12</option>
+          <option value="24">24</option>
           <option value="48">48</option>
           <option value="0">All</option>
         </select>
@@ -191,20 +196,20 @@
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true">
   <div class="modal">
-    <div class="modal-hero">
-      <img id="mImg" alt="">
-    </div>
     <div class="modal-head">
       <div class="modal-title">
         <div class="addr" id="mAddr"></div>
       </div>
+      <button class="modal-close" id="mClose" aria-label="Close">&times;</button>
       <div class="modal-specs">
         <span class="spec price-spec"><b id="mPrice"></b></span>
         <span class="spec"><b id="mBed"></b><br>Beds</span>
         <span class="spec"><b id="mBath"></b><br>Baths</span>
         <span class="spec"><b id="mSf"></b><br>SqFt</span>
       </div>
-      <button class="modal-close" id="mClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-hero">
+      <img id="mImg" alt="">
     </div>
     <div class="modal-body">
       <div class="modal-mapsec">
@@ -681,32 +686,13 @@ function drawPagination(totalPages, totalItems){
   // last page
   s += `<button class="page-btn ${page===totalPages?'active':''}" data-goto="${totalPages}">${totalPages}</button>`;
   s += `<button class="page-btn" data-goto="${page+1}" ${page===totalPages?'disabled':''}>Next ›</button>`;
-  // jump-to-page so any in-between page is still choosable
-  s += `<span class="page-jump"><input id="pageJump" type="number" min="1" max="${totalPages}" value="${page}" aria-label="Jump to page"><button class="page-btn" id="pageGo">Go</button></span>`;
   pc.innerHTML = s;
 }
 document.getElementById("pagination").addEventListener("click", e=>{
   const btn = e.target.closest(".page-btn");
-  if(btn && btn.id === "pageGo"){
-    const inp = document.getElementById("pageJump");
-    const v = parseInt(inp.value, 10);
-    const max = parseInt(inp.max, 10) || 1;
-    if(v >= 1 && v <= max){ page = v; render(activeFilter); }
-    else inp.value = page;
-    return;
-  }
   if(!btn || btn.disabled) return;
   page = parseInt(btn.dataset.goto, 10);
   render(activeFilter);
-});
-document.getElementById("pagination").addEventListener("keydown", e=>{
-  if(e.target && e.target.id === "pageJump" && e.key === "Enter"){
-    const inp = e.target;
-    const v = parseInt(inp.value, 10);
-    const max = parseInt(inp.max, 10) || 1;
-    if(v >= 1 && v <= max){ page = v; render(activeFilter); }
-    else inp.value = page;
-  }
 });
 document.getElementById("perPage").addEventListener("change", e=>{
   page = 1;
