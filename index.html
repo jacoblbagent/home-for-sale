@@ -18,7 +18,7 @@
   .wrap{max-width:1280px;margin:0 auto;padding:0 20px 60px;}
   header{margin-bottom:22px;}
   h1{font-size:30px;font-weight:700;margin:8px 0 6px;}
-  .filterbar{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;margin:0;min-width:0;width:100%;position:sticky;top:0;z-index:200;background:var(--bg);padding:10px 0;}
+  .filterbar{display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap;margin:0;min-width:0;width:100%;position:sticky;top:0;z-index:200;background:var(--bg);padding:10px 0;}
   .list-col{min-width:0;}
   .homesCount{font-size:12.5px;color:var(--muted);white-space:nowrap;}
   .homesCount span{color:var(--muted);font-weight:600;font-size:12.5px;}
@@ -34,10 +34,19 @@
   .filters.open{display:flex;}
   .filters .chip{width:100%;text-align:left;}
   .filters-divider{height:1px;background:var(--border);margin:4px 0;}
+  .filter-label{font-family:inherit;font-size:10.5px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:2px;}
+  .active-filters{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding-top:2px;}
+  .active-filters[hidden]{display:none;}
+  .filter-tag{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--border);color:var(--text);font-size:12px;padding:3px 7px;border-radius:4px;}
+  .filter-tag .tag-label{font-family:inherit;color:var(--muted);font-size:10.5px;font-weight:600;letter-spacing:.04em;}
+  .filter-tag .tag-x{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:3px;font-size:12px;line-height:1;padding:0;font-family:inherit;}
+  .filter-tag .tag-x:hover{color:var(--accent);background:var(--panel2);}
   .price-sel{width:100%;background:var(--panel2);color:var(--text);border:1px solid var(--border);
         border-radius:4px;padding:7px 10px;font-size:13px;cursor:pointer;font-family:inherit;}
-  .homesCount+.sort-sel, .sort-sel{margin-left:auto;background:var(--panel);color:var(--text);border:1px solid var(--border);
-    border-radius:3px;padding:5px 8px;font-size:12px;cursor:pointer;font-family:inherit;}
+  .homesCount+.sort-sel, .sort-sel{margin-left:auto;appearance:none;-webkit-appearance:none;background:var(--panel);color:var(--text);border:1px solid var(--border);
+    border-radius:3px;padding:5px 22px 5px 8px;font-size:12px;cursor:pointer;font-family:inherit;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa3b2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");
+    background-size:10px;background-repeat:no-repeat;background-position:right 8px center;}
   .pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 4px;flex-wrap:wrap;}
   .pp-wrap{display:flex;align-items:center;gap:6px;}
   .pp-wrap label{font-size:13px;color:var(--muted);white-space:nowrap;}
@@ -60,11 +69,9 @@
   .mapSide{position:sticky;top:20px;}
   #map{height:calc(100vh - 40px);min-height:480px;border:1px solid var(--border);border-radius:5px;
        background:var(--panel2);z-index:0;}
-  .mapHint{color:var(--muted);font-size:12px;margin-top:8px;line-height:1.5;}
-  .mapHint b{color:var(--accent);font-weight:600;}
   .card{background:var(--panel);border:1px solid var(--border);border-radius:5px;overflow:hidden;
-        display:flex;flex-direction:column;transition:transform .18s, box-shadow .18s;cursor:pointer;}
-  .card:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.35);}
+        display:flex;flex-direction:column;transition:border-color .18s;cursor:pointer;}
+  .card:hover{border-color:var(--accent);}
   .card.hl{outline:2px solid var(--accent);outline-offset:-2px;}
   .ph{position:relative;aspect-ratio:16/10;background:var(--panel2);overflow:hidden;}
   .ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
@@ -98,7 +105,7 @@
           opacity:0;pointer-events:none;transition:opacity .18s;}
   .overlay.open{opacity:1;pointer-events:auto;}
   .modal{background:var(--panel);border:1px solid var(--border);border-radius:8px;width:min(860px,100%);
-        max-height:calc(100vh - 60px);overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5);}
+        max-height:calc(100vh - 60px);overflow:auto;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.5);flex:none;}
   .modal-head{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px;
              padding:12px 24px 10px;border-bottom:1px solid var(--border);}
   .modal-title .addr{font-size:22px;font-weight:700;line-height:1.25;}
@@ -117,14 +124,14 @@
   .lightbox-close{position:absolute;top:18px;right:22px;background:none;border:none;color:#fff;font-size:34px;
                  line-height:1;cursor:pointer;padding:4px 10px;border-radius:4px;transition:.15s;}
   .lightbox-close:hover{background:rgba(255,255,255,.15);}
-  .modal-body{padding:0 24px 18px;}
+  .modal-body{padding:24px 24px 84px;}
   .modal-specs .spec b{font-size:20px;color:var(--text);}
   .modal-specs .price-spec{margin-right:auto;}
   .modal-specs .price-spec b{font-size:30px;font-weight:700;color:var(--text);}
   .modal-specs .spec{color:var(--muted);font-size:13px;}
   .modal-mapsec{margin-top:16px;}
   #modalMap{height:320px;border:1px solid var(--border);border-radius:6px;background:var(--panel2);}
-  .modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 24px;position:sticky;bottom:0;z-index:5;background:var(--panel);border-top:1px solid var(--border);}
+  .modal-actions{display:flex;justify-content:flex-end;gap:8px;padding:12px 24px;position:sticky;bottom:0;z-index:5;background:var(--panel);border-top:1px solid var(--border);flex:none;}
   .modal-actions .btn{flex:none;padding:9px 20px;font-size:14px;border-radius:5px;}
   .dist-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;}
   .dist-table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -147,7 +154,7 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
       </button>
       <div class="filters" id="filters">
-        <div class="filters-divider"></div>
+        <label class="filter-label" for="priceFilter">Price</label>
         <select id="priceFilter" class="price-sel">
           <option value="all" selected>Any price</option>
           <option value="200">Under $200K</option>
@@ -156,6 +163,7 @@
           <option value="375">$300K – $375K</option>
         </select>
         <div class="filters-divider"></div>
+        <span class="filter-label">Area</span>
         <button class="chip active" data-town="All">All</button>
         <button class="chip" data-town="Brevard">Brevard</button>
         <button class="chip" data-town="Fletcher">Fletcher</button>
@@ -165,13 +173,14 @@
       <div class="homesCount"><span id="statCount">—</span> Listings</div>
     </div>
     <select id="sortSel" class="sort-sel">
-      <option value="price-desc" selected>↓ Price</option>
-      <option value="price-asc">↑ Price</option>
-      <option value="beds-desc">↓ Bedrooms</option>
-      <option value="beds-asc">↑ Bedrooms</option>
-      <option value="sf-desc">↓ Square Feet</option>
-      <option value="sf-asc">↑ Square Feet</option>
+      <option value="price-desc" selected>▼ Price</option>
+      <option value="price-asc">▲ Price</option>
+      <option value="beds-desc">▼ Bedrooms</option>
+      <option value="beds-asc">▲ Bedrooms</option>
+      <option value="sf-desc">▼ Square Feet</option>
+      <option value="sf-asc">▲ Square Feet</option>
     </select>
+    <div class="active-filters" id="activeFilters" hidden></div>
   </div>
       <div class="grid" id="grid"></div>
       <div class="pagination" id="pagination">
@@ -189,7 +198,6 @@
     </div>
     <aside class="mapSide">
       <div id="map"></div>
-      <div class="mapHint"><b>Click a card</b> to open its details and map location, or <b>click a marker</b> for a quick preview. Markers recolor by the active area filter.</div>
     </aside>
   </div>
 
@@ -261,9 +269,7 @@ const HOMES = [
    img:"images/spivey.webp",url:"https://mymosaicrealty.com/property/49-spivey-mountain-road-asheville-nc-28806/106530372/"},
   {price:296000,bed:2,bath:2,sf:957,town:"Fletcher",addr:"875 Mills Gap Road",lat:35.457759,lng:-82.48019,src:"mymosaicrealty.com",
    img:"images/millsgap.webp",url:"https://mymosaicrealty.com/property/875-mills-gap-road-fletcher-nc-28732/108447160/"},
-  {price:275000,bed:2,bath:2,sf:973,town:"Arden",addr:"203 Rocky Mountain Way",lat:35.45264,lng:-82.572725,src:"mymosaicrealty.com",
-   img:"images/rocky.webp",url:"https://mymosaicrealty.com/property/203-rocky-mountain-way-arden-nc-28704/101332772/"},
-  {price:275000,bed:3,bath:3,sf:1680,town:"Bent Creek / S. Asheville",addr:"103 Pebble Creek Drive",lat:35.503086,lng:-82.526939,src:"mymosaicrealty.com",
+    {price:275000,bed:3,bath:3,sf:1680,town:"Bent Creek / S. Asheville",addr:"103 Pebble Creek Drive",lat:35.503086,lng:-82.526939,src:"mymosaicrealty.com",
    img:"images/pebble.webp",url:"https://mymosaicrealty.com/property/103-pebble-creek-drive-asheville-nc-28803/97875815/"},
   {price:367520,bed:3,bath:3,sf:1774,town:"Fletcher",addr:"185 Valley Breeze Road",lat:35.414787,lng:-82.524511,src:"mymosaicrealty.com",
    img:"images/valley185.webp",url:"https://mymosaicrealty.com/property/185-valley-breeze-road-fletcher-nc-28732/107439804/"},
@@ -271,39 +277,29 @@ const HOMES = [
    img:"images/wilson.webp",url:"https://mymosaicrealty.com/property/22-wilson-creek-drive-asheville-nc-28803/106434630/"},
   {price:299999,bed:3,bath:2,sf:1040,town:"Fletcher",addr:"289 Cardwell Lane",lat:35.408822,lng:-82.503151,src:"mymosaicrealty.com",
    img:"images/cardwell.webp",url:"https://mymosaicrealty.com/property/289-cardwell-lane-fletcher-nc-28732/107938801/"},
-  {price:290000,bed:2,bath:3,sf:1824,town:"Bent Creek / S. Asheville",addr:"54 Hollybrook Drive",lat:35.514395,lng:-82.520019,src:"mymosaicrealty.com",
-   img:"images/hollybrook.webp",url:"https://mymosaicrealty.com/property/54-hollybrook-drive-asheville-nc-28803/106322357/"},
-  {price:280000,bed:2,bath:2,sf:1219,town:"Bent Creek / S. Asheville",addr:"117 Pebble Creek Drive",lat:35.502876,lng:-82.527271,src:"mymosaicrealty.com",
+    {price:280000,bed:2,bath:2,sf:1219,town:"Bent Creek / S. Asheville",addr:"117 Pebble Creek Drive",lat:35.502876,lng:-82.527271,src:"mymosaicrealty.com",
    img:"images/pebble117.webp",url:"https://mymosaicrealty.com/property/117-pebble-creek-drive-asheville-nc-28803/106666036/"},
   {price:260000,bed:2,bath:2,sf:1050,town:"Fletcher",addr:"43 Foxden Drive, Unit 104",lat:35.409825,lng:-82.495022,src:"mymosaicrealty.com",
    img:"images/foxden43.webp",url:"https://mymosaicrealty.com/property/43-foxden-drive-fletcher-nc-28732/108013448/"},
   {price:239000,bed:2,bath:2,sf:1070,town:"Fletcher",addr:"4 Meadow Glen Drive",lat:35.43854,lng:-82.46719,src:"mymosaicrealty.com",
    img:"images/meadow4.webp",url:"https://mymosaicrealty.com/property/4-meadow-glen-drive-fletcher-nc-28732/107853412/"},
-  {price:239000,bed:2,bath:2,sf:1070,town:"Fletcher",addr:"2 Meadow Glen Drive",lat:35.438548,lng:-82.467203,src:"mymosaicrealty.com",
-   img:"images/meadow2.webp",url:"https://mymosaicrealty.com/property/2-meadow-glen-drive-fletcher-nc-28732/107774727/"},
-  {price:236000,bed:2,bath:2,sf:1122,town:"Bent Creek / S. Asheville",addr:"304 Birch Forest Lane",lat:35.502902,lng:-82.527632,src:"mymosaicrealty.com",
+    {price:236000,bed:2,bath:2,sf:1122,town:"Bent Creek / S. Asheville",addr:"304 Birch Forest Lane",lat:35.502902,lng:-82.527632,src:"mymosaicrealty.com",
    img:"images/birch.webp",url:"https://mymosaicrealty.com/property/304-birch-forest-lane-asheville-nc-28803/107772535/"},
   {price:225000,bed:2,bath:2,sf:1106,town:"Fletcher",addr:"7 Country Gardens Drive",lat:35.438044,lng:-82.467656,src:"mymosaicrealty.com",
    img:"images/country7.webp",url:"https://mymosaicrealty.com/property/7-country-gardens-drive-fletcher-nc-28732/107834341/"},
   {price:215000,bed:2,bath:2,sf:1106,town:"Fletcher",addr:"5 Country Gardens Drive",lat:35.438137,lng:-82.467547,src:"mymosaicrealty.com",
    img:"images/country5.webp",url:"https://mymosaicrealty.com/property/5-country-gardens-drive-fletcher-nc-28732/107493427/"},
-  {price:213000,bed:2,bath:2,sf:992,town:"Bent Creek / S. Asheville",addr:"111 Appeldoorn Circle",lat:35.553449,lng:-82.527656,src:"mymosaicrealty.com",
-   img:"images/appeldoorn111.webp",url:"https://mymosaicrealty.com/property/111-appeldoorn-circle-asheville-nc-28803/106414587/"},
-  {price:210000,bed:3,bath:2,sf:1243,town:"Bent Creek / S. Asheville",addr:"332 Appeldoorn Circle",lat:35.553449,lng:-82.527656,src:"mymosaicrealty.com",
+    {price:210000,bed:3,bath:2,sf:1243,town:"Bent Creek / S. Asheville",addr:"332 Appeldoorn Circle",lat:35.553449,lng:-82.527656,src:"mymosaicrealty.com",
    img:"images/appeldoorn332.webp",url:"https://mymosaicrealty.com/property/332-appeldoorn-circle-asheville-nc-28803/90770115/"},
   {price:207000,bed:2,bath:2,sf:1273,town:"Fletcher",addr:"93 Foxden Drive, Unit 102",lat:35.410052,lng:-82.494765,src:"mymosaicrealty.com",
    img:"images/foxden93.webp",url:"https://mymosaicrealty.com/property/93-foxden-drive-fletcher-nc-28732/108113502/"},
   {price:198850,bed:2,bath:2,sf:950,town:"Arden",addr:"16 Mallory Lane",lat:35.451358,lng:-82.493462,src:"mymosaicrealty.com",
    img:"images/arden_mallory16.webp",url:"https://mymosaicrealty.com/property/16-mallory-lane-arden-nc-28704/100381538/"},
-  {price:215000,bed:2,bath:2,sf:1006,town:"Arden",addr:"405 Southway Garden Road",lat:35.483783,lng:-82.517498,src:"mymosaicrealty.com",
-   img:"images/arden_southway405.webp",url:"https://mymosaicrealty.com/property/405-southway-garden-road-arden-nc-28704/107915475/"},
-  {price:225000,bed:2,bath:2,sf:1145,town:"Arden",addr:"403 Carrington Place",lat:35.467999,lng:-82.510941,src:"mymosaicrealty.com",
+    {price:225000,bed:2,bath:2,sf:1145,town:"Arden",addr:"403 Carrington Place",lat:35.467999,lng:-82.510941,src:"mymosaicrealty.com",
    img:"images/arden_carrington403.webp",url:"https://mymosaicrealty.com/property/403-carrington-place-arden-nc-28704/107730276/"},
   {price:234500,bed:2,bath:2,sf:1148,town:"Arden",addr:"110 Heywood Road, Unit 8D",lat:35.47161,lng:-82.530034,src:"mymosaicrealty.com",
    img:"images/arden_heywood110.webp",url:"https://mymosaicrealty.com/property/110-heywood-road-arden-nc-28704/108023017/"},
-  {price:235000,bed:3,bath:3,sf:1295,town:"Arden",addr:"119 Colony Drive",lat:35.470896,lng:-82.512961,src:"mymosaicrealty.com",
-   img:"images/arden_colony119.webp",url:"https://mymosaicrealty.com/property/119-colony-drive-arden-nc-28704/107872179/"},
-  {price:299000,bed:3,bath:2,sf:1340,town:"Arden",addr:"14 Palatka Street",lat:35.462961,lng:-82.504119,src:"mymosaicrealty.com",
+    {price:299000,bed:3,bath:2,sf:1340,town:"Arden",addr:"14 Palatka Street",lat:35.462961,lng:-82.504119,src:"mymosaicrealty.com",
    img:"images/arden_palatka14.webp",url:"https://mymosaicrealty.com/property/14-palatka-street-arden-nc-28704/107821409/"},
   {price:359000,bed:3,bath:2,sf:1420,town:"Arden",addr:"15 Winding Oak Drive",lat:35.459979,lng:-82.541627,src:"mymosaicrealty.com",
    img:"images/arden_winding15.webp",url:"https://mymosaicrealty.com/property/15-winding-oak-drive-arden-nc-28704/107584023/"},
@@ -319,61 +315,25 @@ const HOMES = [
    img:"images/brevard_245_bert_lane_road.webp",url:"https://nc-realty.com/listing/CAR4407588/"},
   {price:215000,bed:2,bath:1,sf:679,town:"Brevard",addr:"41 Trowbridge Lane",lat:35.226501,lng:-82.722997,src:"nc-realty.com",
    img:"images/brevard_41_trowbridge_lane.webp",url:"https://nc-realty.com/listing/CAR4368679/"},
-  {price:249000,bed:2,bath:2,sf:735,town:"Brevard",addr:"68 Elm Bend Road",lat:35.227155,lng:-82.724457,src:"nc-realty.com",
-   img:"images/brevard_68_elm_bend_road.webp",url:"https://nc-realty.com/listing/CAR4353213/"},
-  {price:319000,bed:3,bath:1,sf:1195,town:"Brevard",addr:"113 Byrd Lane",lat:35.213868,lng:-82.7556,src:"nc-realty.com",
+    {price:319000,bed:3,bath:1,sf:1195,town:"Brevard",addr:"113 Byrd Lane",lat:35.213868,lng:-82.7556,src:"nc-realty.com",
    img:"images/brevard_113_byrd_lane.webp",url:"https://nc-realty.com/listing/CAR4388450/"},
   {price:325000,bed:2,bath:1,sf:625,town:"Brevard",addr:"29 Salem Street",lat:35.237947,lng:-82.733957,src:"nc-realty.com",
    img:"images/brevard_29_salem_street.webp",url:"https://nc-realty.com/listing/CAR4379938/"},
-  {price:335000,bed:3,bath:2,sf:1676,town:"Brevard",addr:"177 Tsisqua Circle",lat:35.144392,lng:-82.739278,src:"nc-realty.com",
-   img:"images/brevard_177_tsisqua_circle.webp",url:"https://nc-realty.com/listing/CAR4341526/"},
-  {price:345000,bed:3,bath:1,sf:939,town:"Brevard",addr:"89 Carolina Avenue",lat:35.228576,lng:-82.743551,src:"nc-realty.com",
+    {price:345000,bed:3,bath:1,sf:939,town:"Brevard",addr:"89 Carolina Avenue",lat:35.228576,lng:-82.743551,src:"nc-realty.com",
    img:"images/brevard_89_carolina_avenue.webp",url:"https://nc-realty.com/listing/CAR4366083/"},
-  {price:349900,bed:3,bath:2,sf:1418,town:"Brevard",addr:"571 Tsisqua Circle",lat:35.146769,lng:-82.740225,src:"nc-realty.com",
-   img:"images/brevard_571_tsisqua_circle.webp",url:"https://nc-realty.com/listing/CAR4392481/"},
-  {price:364000,bed:2,bath:2,sf:1065,town:"Brevard",addr:"182 Resada Drive",lat:35.243814,lng:-82.739876,src:"nc-realty.com",
-   img:"images/brevard_182_resada_drive.webp",url:"https://nc-realty.com/listing/CAR4390799/"},
-  {price:365000,bed:2,bath:1,sf:1008,town:"Brevard",addr:"250 Oakdale Street",lat:35.232677,lng:-82.739853,src:"nc-realty.com",
+      {price:365000,bed:2,bath:1,sf:1008,town:"Brevard",addr:"250 Oakdale Street",lat:35.232677,lng:-82.739853,src:"nc-realty.com",
    img:"images/brevard_250_oakdale_street.webp",url:"https://nc-realty.com/listing/CAR4396245/"},
   {price:369000,bed:3,bath:1,sf:1360,town:"Brevard",addr:"34 Sunset Drive",lat:35.2408,lng:-82.718521,src:"nc-realty.com",
    img:"images/brevard_34_sunset_drive.webp",url:"https://nc-realty.com/listing/CAR4358442/"},
-  {price:369000,bed:2,bath:2,sf:1156,town:"Brevard",addr:"45 Lakeside Villas Drive",lat:35.14479,lng:-82.717153,src:"nc-realty.com",
-   img:"images/brevard_45_lakeside_villas_drive.webp",url:"https://nc-realty.com/listing/CAR4358376/"},
-  {price:370000,bed:3,bath:2,sf:1127,town:"Brevard",addr:"2760 Ugugu Drive",lat:35.154697,lng:-82.771855,src:"nc-realty.com",
-   img:"images/brevard_2760_ugugu_drive.webp",url:"https://nc-realty.com/listing/CAR4400330/"},
-{price:174900,bed:3,bath:2,sf:1344,town:"Fletcher",addr:"785 Hutch Mountain Road",lat:35.417731,lng:-82.464527,src:"nc-realty.com",
+    {price:174900,bed:3,bath:2,sf:1344,town:"Fletcher",addr:"785 Hutch Mountain Road",lat:35.417731,lng:-82.464527,src:"nc-realty.com",
    img:"images/fletch_785_hutch_mountain_road.webp",url:"https://nc-realty.com/listing/CAR4392584/"},
-  {price:207000,bed:2,bath:2,sf:1273,town:"Fletcher",addr:"93 Foxden Drive",lat:35.410052,lng:-82.494765,src:"nc-realty.com",
-   img:"images/fletch_93_foxden_drive.webp",url:"https://nc-realty.com/listing/CAR4412404/"},
-  {price:225000,bed:2,bath:2,sf:1370,town:"Fletcher",addr:"123 Foxden Drive",lat:35.410052,lng:-82.494765,src:"nc-realty.com",
-   img:"images/fletch_123_foxden_drive.webp",url:"https://nc-realty.com/listing/CAR4404022/"},
-  {price:229950,bed:2,bath:1,sf:853,town:"Fletcher",addr:"63 Sunnybrook Lane",lat:35.438836,lng:-82.521996,src:"nc-realty.com",
+      {price:229950,bed:2,bath:1,sf:853,town:"Fletcher",addr:"63 Sunnybrook Lane",lat:35.438836,lng:-82.521996,src:"nc-realty.com",
    img:"images/fletch_63_sunnybrook_lane.webp",url:"https://nc-realty.com/listing/CAR4388523/"},
-  {price:245000,bed:3,bath:2,sf:1326,town:"Fletcher",addr:"94 Foxden Drive",lat:35.410052,lng:-82.494765,src:"nc-realty.com",
-   img:"images/fletch_94_foxden_drive.webp",url:"https://nc-realty.com/listing/CAR4364312/"},
-  {price:245500,bed:2,bath:2,sf:1107,town:"Fletcher",addr:"31 Amersham Lane",lat:35.440358,lng:-82.49846,src:"nc-realty.com",
-   img:"images/fletch_31_amersham_lane.webp",url:"https://nc-realty.com/listing/CAR4399944/"},
-  {price:248895,bed:3,bath:2,sf:1413,town:"Fletcher",addr:"93 Foxden Drive",lat:35.410052,lng:-82.494765,src:"nc-realty.com",
-   img:"images/fletch_93_foxden_drive_CAR4402301.webp",url:"https://nc-realty.com/listing/CAR4402301/"},
-  {price:255000,bed:3,bath:2,sf:1413,town:"Fletcher",addr:"65 Foxden Drive",lat:35.410052,lng:-82.494765,src:"nc-realty.com",
-   img:"images/fletch_65_foxden_drive.webp",url:"https://nc-realty.com/listing/CAR4389530/"},
-  {price:255000,bed:3,bath:2,sf:1413,town:"Fletcher",addr:"123 Foxden Drive",lat:35.410052,lng:-82.494765,src:"nc-realty.com",
-   img:"images/fletch_123_foxden_drive_CAR4352897.webp",url:"https://nc-realty.com/listing/CAR4352897/"},
-  {price:260000,bed:3,bath:2,sf:1120,town:"Fletcher",addr:"202 Brickton Village Circle",lat:35.411313,lng:-82.502133,src:"nc-realty.com",
-   img:"images/fletch_202_brickton_village_circle.webp",url:"https://nc-realty.com/listing/CAR4389667/"},
-  {price:260000,bed:2,bath:2,sf:1050,town:"Fletcher",addr:"43 Foxden Drive",lat:35.409825,lng:-82.495022,src:"nc-realty.com",
-   img:"images/fletch_43_foxden_drive.webp",url:"https://nc-realty.com/listing/CAR4396841/"},
-  {price:274900,bed:3,bath:2,sf:1027,town:"Fletcher",addr:"163 Connie Drive",lat:35.420076,lng:-82.46155,src:"nc-realty.com",
+                {price:274900,bed:3,bath:2,sf:1027,town:"Fletcher",addr:"163 Connie Drive",lat:35.420076,lng:-82.46155,src:"nc-realty.com",
    img:"images/fletch_163_connie_drive.webp",url:"https://nc-realty.com/listing/CAR4361657/"},
-  {price:275000,bed:3,bath:2,sf:1370,town:"Fletcher",addr:"19 Singleton Lane",lat:35.437875,lng:-82.50126,src:"nc-realty.com",
-   img:"images/fletch_19_singleton_lane.webp",url:"https://nc-realty.com/listing/CAR4297574/"},
-  {price:279000,bed:2,bath:1,sf:1120,town:"Fletcher",addr:"226 Cardwell Lane",lat:35.409205,lng:-82.502282,src:"nc-realty.com",
+    {price:279000,bed:2,bath:1,sf:1120,town:"Fletcher",addr:"226 Cardwell Lane",lat:35.409205,lng:-82.502282,src:"nc-realty.com",
    img:"images/fletch_226_cardwell_lane.webp",url:"https://nc-realty.com/listing/CAR4380970/"},
-  {price:284000,bed:3,bath:2,sf:1186,town:"Fletcher",addr:"124 Foxden Drive",lat:35.410978,lng:-82.494462,src:"nc-realty.com",
-   img:"images/fletch_124_foxden_drive.webp",url:"https://nc-realty.com/listing/CAR4244379/"},
-  {price:284900,bed:3,bath:2,sf:1111,town:"Fletcher",addr:"291 Brickton Village Circle",lat:35.410845,lng:-82.502718,src:"nc-realty.com",
-   img:"images/fletch_291_brickton_village_circle.webp",url:"https://nc-realty.com/listing/CAR4383308/"},
-  {price:289000,bed:3,bath:2,sf:1253,town:"Fletcher",addr:"46 Chesire Way",lat:35.439943,lng:-82.529535,src:"nc-realty.com",
+      {price:289000,bed:3,bath:2,sf:1253,town:"Fletcher",addr:"46 Chesire Way",lat:35.439943,lng:-82.529535,src:"nc-realty.com",
    img:"images/fletch_46_chesire_way.webp",url:"https://nc-realty.com/listing/CAR4373703/"},
   {price:289500,bed:3,bath:2,sf:1296,town:"Fletcher",addr:"64 Lanceford Circle",lat:35.439943,lng:-82.529535,src:"nc-realty.com",
    img:"images/fletch_64_lanceford_circle.webp",url:"https://nc-realty.com/listing/CAR4374412/"},
@@ -415,9 +375,7 @@ const HOMES = [
    img:"images/arden_1_pensacola_heights.webp",url:"https://nc-realty.com/listing/CAR4369465/"},
   {price:237900,bed:2,bath:2,sf:1198,town:"Arden",addr:"509 Carrington Place",lat:35.468437,lng:-82.510906,src:"nc-realty.com",
    img:"images/arden_509_carrington_place.webp",url:"https://nc-realty.com/listing/CAR4384818/"},
-  {price:250000,bed:2,bath:2,sf:1160,town:"Arden",addr:"515 Carrington Place",lat:35.468959,lng:-82.510436,src:"nc-realty.com",
-   img:"images/arden_515_carrington_place.webp",url:"https://nc-realty.com/listing/CAR4383772/"},
-  {price:255500,bed:2,bath:1,sf:1064,town:"Arden",addr:"16 Aberdeen Drive",lat:35.463452,lng:-82.540368,src:"nc-realty.com",
+    {price:255500,bed:2,bath:1,sf:1064,town:"Arden",addr:"16 Aberdeen Drive",lat:35.463452,lng:-82.540368,src:"nc-realty.com",
    img:"images/arden_16_aberdeen_drive.webp",url:"https://nc-realty.com/listing/CAR4313814/"},
   {price:285000,bed:3,bath:2,sf:1371,town:"Arden",addr:"1106 Lynwood Forest Road",lat:35.455211,lng:-82.502676,src:"nc-realty.com",
    img:"images/arden_1106_lynwood_forest_road.webp",url:"https://nc-realty.com/listing/CAR4359769/"},
@@ -431,19 +389,13 @@ const HOMES = [
    img:"images/arden_10_aberdeen_drive.webp",url:"https://nc-realty.com/listing/CAR4344820/"},
   {price:309900,bed:3,bath:2,sf:1437,town:"Arden",addr:"1009 Baldwin Commons Drive",lat:35.455542,lng:-82.502023,src:"nc-realty.com",
    img:"images/arden_1009_baldwin_commons_drive.webp",url:"https://nc-realty.com/listing/CAR4363263/"},
-  {price:310000,bed:3,bath:2,sf:1360,town:"Arden",addr:"83 Sunny Meadows Boulevard",lat:35.455447,lng:-82.535547,src:"nc-realty.com",
-   img:"images/arden_83_sunny_meadows_boulevard.webp",url:"https://nc-realty.com/listing/CAR4396781/"},
-  {price:314000,bed:3,bath:2,sf:1325,town:"Arden",addr:"99 Sunny Meadows Boulevard",lat:35.454836,lng:-82.536808,src:"nc-realty.com",
-   img:"images/arden_99_sunny_meadows_boulevard.webp",url:"https://nc-realty.com/listing/CAR4347586/"},
-  {price:316990,bed:3,bath:2,sf:1587,town:"Arden",addr:"75 Moon Haven Way",lat:35.471289,lng:-82.576451,src:"nc-realty.com",
+      {price:316990,bed:3,bath:2,sf:1587,town:"Arden",addr:"75 Moon Haven Way",lat:35.471289,lng:-82.576451,src:"nc-realty.com",
    img:"images/arden_75_moon_haven_way.webp",url:"https://nc-realty.com/listing/CAR4398075/"},
   {price:316990,bed:3,bath:2,sf:1616,town:"Arden",addr:"77 Moon Haven Way",lat:35.471239,lng:-82.576466,src:"nc-realty.com",
    img:"images/arden_77_moon_haven_way.webp",url:"https://nc-realty.com/listing/CAR4386593/"},
   {price:316990,bed:3,bath:2,sf:1587,town:"Arden",addr:"79 Moon Haven Way",lat:35.471187,lng:-82.576484,src:"nc-realty.com",
    img:"images/arden_79_moon_haven_way.webp",url:"https://nc-realty.com/listing/CAR4380937/"},
-  {price:318000,bed:3,bath:2,sf:1351,town:"Arden",addr:"93 Sunny Meadows Boulevard",lat:35.454836,lng:-82.536808,src:"nc-realty.com",
-   img:"images/arden_93_sunny_meadows_boulevard.webp",url:"https://nc-realty.com/listing/CAR4343214/"},
-  {price:339000,bed:2,bath:2,sf:1452,town:"Arden",addr:"58 Lilac Fields Way",lat:35.45459,lng:-82.536586,src:"nc-realty.com",
+    {price:339000,bed:2,bath:2,sf:1452,town:"Arden",addr:"58 Lilac Fields Way",lat:35.45459,lng:-82.536586,src:"nc-realty.com",
    img:"images/arden_58_lilac_fields_way.webp",url:"https://nc-realty.com/listing/CAR4403318/"},
   {price:339000,bed:2,bath:1,sf:896,town:"Arden",addr:"13 Trade Street",lat:35.481678,lng:-82.529614,src:"nc-realty.com",
    img:"images/arden_13_trade_street.webp",url:"https://nc-realty.com/listing/CAR4388890/"},
@@ -457,7 +409,7 @@ const HOMES = [
    img:"images/sash_winterwoods14.webp",url:"https://nc-realty.com/listing/CAR4363291/"},
 ];
 
-const DIST = {"13 Mallard Run Drive":[[17.2,27],[24.2,40],[12.3,20],[29.1,45],[21.0,38]],"318 Souther Road":[[21.8,35],[26.7,47],[15.9,31],[26.7,45],[18.5,38]],"119 Downing Park Court, Unit E":[[4.3,10],[13.0,25],[33.5,50],[23.6,59],[16.4,35]],"175 Valley Breeze Road":[[16.0,26],[21.6,39],[18.3,28],[23.8,38],[15.7,31]],"123 Lanceford Circle":[[16.4,25],[23.4,39],[14.0,21],[26.0,41],[18.0,33]],"49 Spivey Mountain Road":[[30.2,46],[37.3,59],[3.6,9],[39.1,60],[31.1,53]],"875 Mills Gap Road":[[20.5,32],[25.2,44],[13.0,25],[27.1,43],[19.1,35]],"203 Rocky Mountain Way":[[16.0,24],[23.1,37],[13.1,21],[29.3,46],[18.5,38]],"103 Pebble Creek Drive":[[22.1,34],[29.2,47],[9.0,18],[31.0,48],[23.0,41]],"185 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"22 Wilson Creek Drive":[[25.4,40],[32.5,54],[6.0,14],[34.3,55],[26.3,47]],"289 Cardwell Lane":[[17.2,28],[21.7,39],[18.1,27],[23.6,38],[15.6,31]],"54 Hollybrook Drive":[[22.1,33],[29.1,47],[8.9,17],[31.0,48],[22.9,41]],"117 Pebble Creek Drive":[[22.1,34],[29.2,47],[9.0,18],[31.0,48],[23.0,41]],"43 Foxden Drive, Unit 104":[[17.7,30],[22.3,42],[18.7,30],[24.1,40],[13.2,33]],"4 Meadow Glen Drive":[[20.5,33],[25.2,45],[14.7,28],[27.1,43],[19.1,36]],"2 Meadow Glen Drive":[[20.5,33],[25.2,45],[14.7,28],[27.1,43],[19.1,36]],"304 Birch Forest Lane":[[21.9,33],[28.9,47],[8.8,18],[30.9,47],[22.9,40]],"7 Country Gardens Drive":[[20.4,33],[25.1,44],[14.8,28],[27.0,43],[19.0,36]],"5 Country Gardens Drive":[[20.5,33],[25.2,45],[14.8,28],[27.0,43],[19.0,36]],"111 Appeldoorn Circle":[[25.3,41],[32.4,54],[6.2,14],[34.2,55],[26.2,48]],"332 Appeldoorn Circle":[[25.3,41],[32.4,54],[6.2,14],[34.2,55],[26.2,48]],"93 Foxden Drive, Unit 102":[[17.9,31],[22.4,43],[18.8,30],[24.3,41],[13.3,33]],"16 Mallory Lane":[[19.7,30],[26.8,43],[15.3,25],[26.8,44],[18.8,37]],"405 Southway Garden Road":[[19.9,30],[27.0,43],[12.6,20],[28.8,44],[20.8,37]],"403 Carrington Place":[[19.0,29],[26.1,42],[13.8,22],[27.9,43],[19.9,36]],"110 Heywood Road, Unit 8D":[[18.8,30],[25.9,43],[13.2,21],[27.7,44],[19.7,37]],"119 Colony Drive":[[19.1,28],[26.2,42],[13.5,21],[28.0,43],[20.0,36]],"14 Palatka Street":[[18.7,29],[25.8,42],[14.3,23],[27.6,43],[19.6,36]],"15 Winding Oak Drive":[[18.2,29],[25.3,42],[14.2,24],[27.7,44],[19.7,37]],"440 Carolina Avenue":[[4.4,10],[13.1,25],[33.5,50],[24.0,60],[16.5,36]],"185 Duckworth Avenue":[[4.0,9],[12.6,24],[33.1,50],[23.5,59],[16.0,35]],"520 Pisgah Drive":[[1.2,3],[10.4,19],[30.3,44],[30.2,58],[13.8,29]],"43 Trowbridge Lane":[[4.4,9],[15.6,24],[33.5,50],[22.4,56],[16.2,35]],"245 Bert Lane Road":[[5.6,12],[14.9,23],[34.7,52],[21.6,56],[17.4,37]],"41 Trowbridge Lane":[[4.4,9],[15.6,24],[33.5,50],[22.4,56],[16.2,35]],"68 Elm Bend Road":[[4.3,9],[12.7,24],[33.4,49],[22.4,56],[16.1,34]],"113 Byrd Lane":[[5.5,12],[14.1,27],[34.6,52],[23.3,61],[17.5,37]],"29 Salem Street":[[3.3,7],[12.0,22],[32.5,48],[23.4,58],[15.4,33]],"177 Tsisqua Circle":[[12.7,29],[11.9,25],[41.8,69],[18.6,57],[20.5,43]],"89 Carolina Avenue":[[4.4,10],[13.1,25],[33.5,50],[24.0,60],[16.5,35]],"571 Tsisqua Circle":[[12.9,29],[12.2,26],[42.0,70],[18.9,58],[20.8,44]],"182 Resada Drive":[[3.9,9],[12.6,24],[33.0,49],[24.1,61],[15.9,35]],"250 Oakdale Street":[[4.0,9],[12.7,24],[33.1,50],[23.5,59],[16.0,35]],"34 Sunset Drive":[[2.9,7],[11.4,21],[32.0,47],[23.7,60],[14.8,31]],"45 Lakeside Villas Drive":[[12.0,22],[10.0,17],[41.1,63],[16.8,50],[18.6,36]],"2760 Ugugu Drive":[[11.7,24],[14.8,26],[40.9,64],[21.5,59],[23.4,45]],"785 Hutch Mountain Road":[[20.5,36],[22.8,44],[16.7,32],[24.4,45],[14.6,34]],"93 Foxden Drive":[[17.9,31],[22.4,43],[18.8,30],[24.3,41],[13.3,33]],"123 Foxden Drive":[[17.9,31],[22.4,43],[18.8,30],[24.3,41],[13.3,33]],"63 Sunnybrook Lane":[[17.1,26],[24.2,39],[15.0,22],[25.7,41],[17.7,34]],"94 Foxden Drive":[[17.9,31],[22.4,43],[18.8,30],[24.3,41],[13.3,33]],"31 Amersham Lane":[[18.2,28],[23.6,42],[15.5,25],[25.5,40],[17.5,33]],"65 Foxden Drive":[[17.9,31],[22.4,43],[18.8,30],[24.3,41],[13.3,33]],"202 Brickton Village Circle":[[17.2,28],[21.7,39],[18.1,27],[23.6,38],[15.6,31]],"43 Foxden Drive":[[17.7,30],[22.3,42],[18.7,30],[24.1,40],[13.2,33]],"163 Connie Drive":[[20.4,37],[23.6,46],[16.6,32],[26.8,47],[15.4,37]],"19 Singleton Lane":[[18.1,28],[23.1,41],[15.6,25],[24.9,39],[16.9,32]],"226 Cardwell Lane":[[17.2,28],[21.7,39],[18.1,27],[23.6,38],[15.6,31]],"124 Foxden Drive":[[17.9,32],[22.5,43],[18.9,31],[24.3,42],[13.3,34]],"291 Brickton Village Circle":[[17.2,28],[21.7,39],[18.1,27],[23.6,38],[15.6,31]],"46 Chesire Way":[[16.4,25],[23.4,39],[14.0,21],[26.0,41],[18.0,33]],"64 Lanceford Circle":[[16.4,25],[23.4,39],[14.0,21],[26.0,41],[18.0,33]],"771 Cardwell Lane":[[17.1,27],[21.6,39],[18.0,27],[23.5,37],[15.5,30]],"65 Philips Court":[[20.4,33],[25.1,44],[14.9,28],[27.0,43],[19.0,36]],"403 Youngs Gap Road":[[25.3,45],[28.3,53],[19.0,36],[28.2,52],[20.0,44]],"5 Wildwood Circle":[[16.0,23],[23.1,37],[14.3,20],[26.0,39],[18.0,32]],"211 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"189 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"215 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"308 Wiltshire Circle":[[17.4,27],[24.5,40],[14.9,22],[26.0,41],[18.0,34]],"195 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"512 Hutch Mountain Road":[[20.1,35],[21.9,42],[20.0,33],[23.5,43],[13.6,32]],"95 Newberry Drive":[[21.0,34],[25.7,46],[15.2,29],[27.6,45],[19.6,37]],"188 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"196 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,28],[23.7,38],[15.7,31]],"197 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"205 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"58 Pittman Road":[[19.9,35],[21.7,42],[19.8,33],[23.3,43],[13.4,32]],"58 S Sunberry Trail":[[19.9,35],[23.9,46],[15.7,30],[26.3,45],[15.6,36]],"1 Pensacola Heights":[[18.4,27],[25.5,41],[14.0,22],[27.3,42],[19.3,35]],"509 Carrington Place":[[19.0,29],[26.1,42],[13.8,22],[27.9,43],[19.9,36]],"515 Carrington Place":[[19.0,29],[26.1,42],[13.8,22],[27.9,43],[19.9,36]],"16 Aberdeen Drive":[[18.5,29],[25.6,42],[15.4,24],[27.4,43],[19.4,36]],"1106 Lynwood Forest Road":[[19.2,29],[26.2,42],[14.8,24],[28.0,43],[20.0,36]],"1017 Baldwin Commons Drive":[[19.1,29],[26.2,42],[14.7,24],[28.0,43],[20.0,36]],"1214 Pauline Trail Drive":[[19.3,30],[26.3,43],[14.8,24],[28.1,44],[20.1,37]],"7 Mahogany Road":[[18.7,30],[25.8,44],[15.6,26],[27.6,45],[19.6,38]],"10 Aberdeen Drive":[[18.5,29],[25.6,42],[15.4,24],[27.4,43],[19.4,36]],"1009 Baldwin Commons Drive":[[19.1,29],[26.2,42],[14.7,23],[28.0,43],[20.0,36]],"83 Sunny Meadows Boulevard":[[18.0,28],[25.1,41],[14.8,23],[26.9,42],[18.9,35]],"99 Sunny Meadows Boulevard":[[18.1,28],[25.2,41],[14.9,23],[27.0,42],[19.0,35]],"75 Moon Haven Way":[[17.4,27],[24.5,40],[11.5,18],[29.6,45],[21.6,38]],"77 Moon Haven Way":[[17.4,27],[24.5,40],[11.6,18],[29.6,45],[21.6,38]],"79 Moon Haven Way":[[17.4,27],[24.5,40],[11.6,18],[29.6,45],[21.6,38]],"93 Sunny Meadows Boulevard":[[18.1,28],[25.2,41],[14.9,23],[27.0,42],[19.0,35]],"58 Lilac Fields Way":[[18.1,28],[25.1,41],[14.9,23],[27.0,42],[18.9,35]],"13 Trade Street":[[20.2,31],[27.3,44],[12.1,19],[29.1,45],[21.0,38]],"22 Glenview Place":[[18.2,28],[25.3,41],[15.0,23],[27.1,42],[19.1,35]],"73 Fair Oaks Road":[[19.2,29],[26.3,43],[14.8,24],[26.1,42],[18.1,35]],"25 Laurel Park Drive":[[17.0,26],[24.0,39],[12.2,19],[30.3,46],[22.3,39]],"14 Winter Woods Drive":[[34.3,50],[41.3,63],[6.0,12],[43.2,64],[35.1,57]]};
+const DIST = {"13 Mallard Run Drive":[[17.2,27],[24.2,40],[12.3,20],[29.1,45],[21.0,38]],"318 Souther Road":[[21.8,35],[26.7,47],[15.9,31],[26.7,45],[18.5,38]],"119 Downing Park Court, Unit E":[[4.3,10],[13.0,25],[33.5,50],[23.6,59],[16.4,35]],"175 Valley Breeze Road":[[16.0,26],[21.6,39],[18.3,28],[23.8,38],[15.7,31]],"123 Lanceford Circle":[[16.4,25],[23.4,39],[14.0,21],[26.0,41],[18.0,33]],"49 Spivey Mountain Road":[[30.2,46],[37.3,59],[3.6,9],[39.1,60],[31.1,53]],"875 Mills Gap Road":[[20.5,32],[25.2,44],[13.0,25],[27.1,43],[19.1,35]],"103 Pebble Creek Drive":[[22.1,34],[29.2,47],[9.0,18],[31.0,48],[23.0,41]],"185 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"22 Wilson Creek Drive":[[25.4,40],[32.5,54],[6.0,14],[34.3,55],[26.3,47]],"289 Cardwell Lane":[[17.2,28],[21.7,39],[18.1,27],[23.6,38],[15.6,31]],"117 Pebble Creek Drive":[[22.1,34],[29.2,47],[9.0,18],[31.0,48],[23.0,41]],"43 Foxden Drive, Unit 104":[[17.7,30],[22.3,42],[18.7,30],[24.1,40],[13.2,33]],"4 Meadow Glen Drive":[[20.5,33],[25.2,45],[14.7,28],[27.1,43],[19.1,36]],"304 Birch Forest Lane":[[21.9,33],[28.9,47],[8.8,18],[30.9,47],[22.9,40]],"7 Country Gardens Drive":[[20.4,33],[25.1,44],[14.8,28],[27.0,43],[19.0,36]],"5 Country Gardens Drive":[[20.5,33],[25.2,45],[14.8,28],[27.0,43],[19.0,36]],"332 Appeldoorn Circle":[[25.3,41],[32.4,54],[6.2,14],[34.2,55],[26.2,48]],"93 Foxden Drive, Unit 102":[[17.9,31],[22.4,43],[18.8,30],[24.3,41],[13.3,33]],"16 Mallory Lane":[[19.7,30],[26.8,43],[15.3,25],[26.8,44],[18.8,37]],"403 Carrington Place":[[19.0,29],[26.1,42],[13.8,22],[27.9,43],[19.9,36]],"110 Heywood Road, Unit 8D":[[18.8,30],[25.9,43],[13.2,21],[27.7,44],[19.7,37]],"14 Palatka Street":[[18.7,29],[25.8,42],[14.3,23],[27.6,43],[19.6,36]],"15 Winding Oak Drive":[[18.2,29],[25.3,42],[14.2,24],[27.7,44],[19.7,37]],"440 Carolina Avenue":[[4.4,10],[13.1,25],[33.5,50],[24.0,60],[16.5,36]],"185 Duckworth Avenue":[[4.0,9],[12.6,24],[33.1,50],[23.5,59],[16.0,35]],"520 Pisgah Drive":[[1.2,3],[10.4,19],[30.3,44],[30.2,58],[13.8,29]],"43 Trowbridge Lane":[[4.4,9],[15.6,24],[33.5,50],[22.4,56],[16.2,35]],"245 Bert Lane Road":[[5.6,12],[14.9,23],[34.7,52],[21.6,56],[17.4,37]],"41 Trowbridge Lane":[[4.4,9],[15.6,24],[33.5,50],[22.4,56],[16.2,35]],"113 Byrd Lane":[[5.5,12],[14.1,27],[34.6,52],[23.3,61],[17.5,37]],"29 Salem Street":[[3.3,7],[12.0,22],[32.5,48],[23.4,58],[15.4,33]],"89 Carolina Avenue":[[4.4,10],[13.1,25],[33.5,50],[24.0,60],[16.5,35]],"250 Oakdale Street":[[4.0,9],[12.7,24],[33.1,50],[23.5,59],[16.0,35]],"34 Sunset Drive":[[2.9,7],[11.4,21],[32.0,47],[23.7,60],[14.8,31]],"785 Hutch Mountain Road":[[20.5,36],[22.8,44],[16.7,32],[24.4,45],[14.6,34]],"63 Sunnybrook Lane":[[17.1,26],[24.2,39],[15.0,22],[25.7,41],[17.7,34]],"163 Connie Drive":[[20.4,37],[23.6,46],[16.6,32],[26.8,47],[15.4,37]],"226 Cardwell Lane":[[17.2,28],[21.7,39],[18.1,27],[23.6,38],[15.6,31]],"46 Chesire Way":[[16.4,25],[23.4,39],[14.0,21],[26.0,41],[18.0,33]],"64 Lanceford Circle":[[16.4,25],[23.4,39],[14.0,21],[26.0,41],[18.0,33]],"771 Cardwell Lane":[[17.1,27],[21.6,39],[18.0,27],[23.5,37],[15.5,30]],"65 Philips Court":[[20.4,33],[25.1,44],[14.9,28],[27.0,43],[19.0,36]],"403 Youngs Gap Road":[[25.3,45],[28.3,53],[19.0,36],[28.2,52],[20.0,44]],"5 Wildwood Circle":[[16.0,23],[23.1,37],[14.3,20],[26.0,39],[18.0,32]],"211 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"189 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"215 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"308 Wiltshire Circle":[[17.4,27],[24.5,40],[14.9,22],[26.0,41],[18.0,34]],"195 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"512 Hutch Mountain Road":[[20.1,35],[21.9,42],[20.0,33],[23.5,43],[13.6,32]],"95 Newberry Drive":[[21.0,34],[25.7,46],[15.2,29],[27.6,45],[19.6,37]],"188 Valley Breeze Road":[[16.0,26],[21.5,39],[18.3,28],[23.7,38],[15.7,31]],"196 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,28],[23.7,38],[15.7,31]],"197 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"205 Valley Breeze Road":[[16.0,26],[21.5,39],[18.2,27],[23.7,38],[15.7,31]],"58 Pittman Road":[[19.9,35],[21.7,42],[19.8,33],[23.3,43],[13.4,32]],"58 S Sunberry Trail":[[19.9,35],[23.9,46],[15.7,30],[26.3,45],[15.6,36]],"1 Pensacola Heights":[[18.4,27],[25.5,41],[14.0,22],[27.3,42],[19.3,35]],"509 Carrington Place":[[19.0,29],[26.1,42],[13.8,22],[27.9,43],[19.9,36]],"16 Aberdeen Drive":[[18.5,29],[25.6,42],[15.4,24],[27.4,43],[19.4,36]],"1106 Lynwood Forest Road":[[19.2,29],[26.2,42],[14.8,24],[28.0,43],[20.0,36]],"1017 Baldwin Commons Drive":[[19.1,29],[26.2,42],[14.7,24],[28.0,43],[20.0,36]],"1214 Pauline Trail Drive":[[19.3,30],[26.3,43],[14.8,24],[28.1,44],[20.1,37]],"7 Mahogany Road":[[18.7,30],[25.8,44],[15.6,26],[27.6,45],[19.6,38]],"10 Aberdeen Drive":[[18.5,29],[25.6,42],[15.4,24],[27.4,43],[19.4,36]],"1009 Baldwin Commons Drive":[[19.1,29],[26.2,42],[14.7,23],[28.0,43],[20.0,36]],"75 Moon Haven Way":[[17.4,27],[24.5,40],[11.5,18],[29.6,45],[21.6,38]],"77 Moon Haven Way":[[17.4,27],[24.5,40],[11.6,18],[29.6,45],[21.6,38]],"79 Moon Haven Way":[[17.4,27],[24.5,40],[11.6,18],[29.6,45],[21.6,38]],"58 Lilac Fields Way":[[18.1,28],[25.1,41],[14.9,23],[27.0,42],[18.9,35]],"13 Trade Street":[[20.2,31],[27.3,44],[12.1,19],[29.1,45],[21.0,38]],"22 Glenview Place":[[18.2,28],[25.3,41],[15.0,23],[27.1,42],[19.1,35]],"73 Fair Oaks Road":[[19.2,29],[26.3,43],[14.8,24],[26.1,42],[18.1,35]],"25 Laurel Park Drive":[[17.0,26],[24.0,39],[12.2,19],[30.3,46],[22.3,39]],"14 Winter Woods Drive":[[34.3,50],[41.3,63],[6.0,12],[43.2,64],[35.1,57]]};
 
 const RIDE_DEST = [
   "The Hub Pisgah",
@@ -487,6 +439,7 @@ const TOWN_COLOR = {
 };
 const markers = {};   // addr -> marker
 let activeFilter = "All";
+let activePrice = "all";
 let activeSort = "price-desc";
 let page = 1;
 
@@ -498,6 +451,8 @@ const SORTERS = {
   "sf-desc":(a,b)=>b.sf-a.sf,
   "sf-asc":(a,b)=>a.sf-b.sf,
 };
+const PRICE_BANDS = { "200":[0,200000], "250":[200000,250000], "300":[250000,300000], "375":[300000,375000] };
+const PRICE_LABELS = { "200":"Under $200K", "250":"$200K – $250K", "300":"$250K – $300K", "375":"$300K – $375K" };
 function sortList(list){ list.sort(SORTERS[activeSort] || SORTERS["price-desc"]); }
 
 function popupHTML(h){
@@ -547,9 +502,7 @@ function setHoverMarkers(addr){
 }
 
 const markedLayer = L.layerGroup().addTo(map);
-function showMarkers(filter){
-  const isAll = filter==="All";
-  const list = isAll ? HOMES : HOMES.filter(h=>h.town.includes(filter));
+function showMarkers(list, isAll){
   markedLayer.clearLayers();
   list.forEach(h=>{
     const mk = markers[h.addr];
@@ -560,8 +513,10 @@ function showMarkers(filter){
   });
   if(!isAll){
     // keep other areas visible but dimmed, so the selected area stands out with context
+    // (only those that also pass the price filter — price-filtered homes stay hidden)
+    const priceMatch = h => activePrice==="all" || (h.price>=PRICE_BANDS[activePrice][0] && h.price<=PRICE_BANDS[activePrice][1]);
     HOMES.forEach(h=>{
-      if(!list.includes(h)){
+      if(!list.includes(h) && priceMatch(h)){
         const mk = markers[h.addr];
         mk.setIcon(townIcon("#8ab4d8", { dim:true }));
         mk._baseIcon = mk.getIcon();
@@ -585,7 +540,7 @@ function showMarkers(filter){
 /* ---------- Listing modal ---------- */
 const overlay = document.getElementById("overlay");
 function buildModalMap(){
-  const m = L.map("modalMap", {scrollWheelZoom:false});
+  const m = L.map("modalMap", {scrollWheelZoom:true});
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
     maxZoom:20, subdomains:"abcd",
     attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -657,12 +612,17 @@ document.addEventListener("keydown", e=>{
   else if(overlay.classList.contains("open")){ closeModal(); }
 });
 
+function applyFilters(filter){
+  const priceMatch = h => activePrice==="all" || (h.price>=PRICE_BANDS[activePrice][0] && h.price<=PRICE_BANDS[activePrice][1]);
+  return (filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter))).filter(priceMatch);
+}
 function render(filter){
-  const list = filter==="All" ? HOMES : HOMES.filter(h=>h.town.includes(filter));
+  const list = applyFilters(filter);
   sortList(list);
   statCount.textContent = list.length;
+  renderActiveFilters();
   // sync map markers to filter + color by town
-  showMarkers(filter);
+  showMarkers(list, filter==="All");
   // paginate
   const pag = document.getElementById("pagination");
   const pp = parseInt(document.getElementById("perPage").value, 10) || 0;
@@ -745,15 +705,43 @@ function updateH1(filter){
   if(!h1) return;
   h1.textContent = filter === "All" ? DEFAULT_TITLE : "For Sale in: " + filter;
 }
-document.getElementById("filters").addEventListener("click", e=>{
-  const chip = e.target.closest(".chip");
-  if(!chip) return;
-  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active"));
-  chip.classList.add("active");
-  activeFilter = chip.dataset.town;
+const activeFiltersEl = document.getElementById("activeFilters");
+function renderActiveFilters(){
+  const tags = [];
+  if(activeFilter !== "All"){
+    tags.push({ kind:"Area", label:activeFilter, clear:()=>{ setAreaFilter("All"); } });
+  }
+  if(activePrice !== "all"){
+    tags.push({ kind:"Price", label:PRICE_LABELS[activePrice]||activePrice, clear:()=>{ setPriceFilter("all"); } });
+  }
+  if(!tags.length){ activeFiltersEl.hidden = true; activeFiltersEl.innerHTML = ""; return; }
+  activeFiltersEl.hidden = false;
+  activeFiltersEl.innerHTML = tags.map((t,i)=>`
+      <span class="filter-tag"><span class="tag-label">${t.kind}</span>${t.label}
+        <button class="tag-x" data-i="${i}" aria-label="Remove ${t.kind} filter" title="Remove">✕</button>
+      </span>`).join("");
+  activeFiltersEl.querySelectorAll(".tag-x").forEach(b=>{
+    b.addEventListener("click", ()=>tags[parseInt(b.dataset.i, 10)].clear());
+  });
+}
+
+function setAreaFilter(town){
+  activeFilter = town;
+  document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("active", c.dataset.town===town));
   page = 1;
   updateH1(activeFilter);
   render(activeFilter);
+}
+function setPriceFilter(value){
+  activePrice = value;
+  document.getElementById("priceFilter").value = value;
+  page = 1;
+  render(activeFilter);
+}
+document.getElementById("filters").addEventListener("click", e=>{
+  const chip = e.target.closest(".chip");
+  if(!chip) return;
+  setAreaFilter(chip.dataset.town);
   closeFilterMenu();
 });
 
@@ -779,6 +767,10 @@ document.addEventListener("click", e=>{
 });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeFilterMenu(); });
 
+document.getElementById("priceFilter").addEventListener("change", e=>{
+  setPriceFilter(e.target.value);
+  closeFilterMenu();
+});
 document.getElementById("sortSel").addEventListener("change", e=>{
   activeSort = e.target.value;
   page = 1;

@@ -1,6 +1,6 @@
 # Home for Sale — WNC Homes Under $375K
 
-A fast, single-file reference site for home listings in Western North Carolina. It surfaces **104 live homes under $375K** (2–3 bedroom) across **Brevard · Arden · Fletcher · South Asheville / Bent Creek**, each with a photo, price, specs, and a link back to the original brokerage listing — plus an interactive Leaflet map.
+A fast, single-file reference site for home listings in Western North Carolina. It surfaces **76 live homes under $375K** (2–3 bedroom) across **Brevard · Arden · Fletcher · South Asheville / Bent Creek**, each with a photo, price, specs, and a link back to the original brokerage listing — plus an interactive Leaflet map.
 
 Private GitHub Pages site, built locally from the Canopy MLS feeds.
 
@@ -23,11 +23,11 @@ Private GitHub Pages site, built locally from the Canopy MLS feeds.
 
 | Area | Listings |
 |------|----------|
-| Fletcher | 47 |
-| Arden | 30 |
-| Brevard | 18 |
-| Bent Creek / S. Asheville | 9 |
-| **Total** | **104** |
+| Fletcher | 34 |
+| Arden | 23 |
+| Brevard | 12 |
+| Bent Creek / S. Asheville | 7 |
+| **Total** | **76** |
 
 ## How it works
 
