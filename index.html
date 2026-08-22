@@ -127,7 +127,7 @@
   .modal-actions{display:flex;justify-content:flex-end;padding:0 24px 24px;}
   .modal-actions .btn{flex:none;padding:9px 20px;font-size:14px;border-radius:5px;}
   @media(max-width:1100px){ .layout{grid-template-columns:1fr;} #map{height:420px;height:60vh;position:sticky;top:20px;} .mapSide{position:static;} .modal-hero img{height:240px;} }
-  @media(max-width:520px){ h1{font-size:24px;} }
+  @media(max-width:520px){ h1{font-size:19px;} }
   </style>
 </head>
 <body>
@@ -713,6 +713,12 @@ document.getElementById("perPage").addEventListener("change", e=>{
   render(activeFilter);
 });
 
+const DEFAULT_TITLE = "For Sale in: Brevard · Arden · Fletcher · South Asheville / Bent Creek";
+function updateH1(filter){
+  const h1 = document.querySelector("h1");
+  if(!h1) return;
+  h1.textContent = filter === "All" ? DEFAULT_TITLE : "For Sale in: " + filter;
+}
 document.getElementById("filters").addEventListener("click", e=>{
   const chip = e.target.closest(".chip");
   if(!chip) return;
@@ -720,6 +726,7 @@ document.getElementById("filters").addEventListener("click", e=>{
   chip.classList.add("active");
   activeFilter = chip.dataset.town;
   page = 1;
+  updateH1(activeFilter);
   render(activeFilter);
   closeFilterMenu();
 });
