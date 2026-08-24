@@ -137,10 +137,18 @@
   .dist-table{width:100%;border-collapse:collapse;font-size:13px;}
   .dist-table th{text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:6px 10px;border-bottom:1px solid var(--border);}
   .dist-table th.num{text-align:right;}
+  .dist-table th.sortable{cursor:pointer;user-select:none;white-space:nowrap;transition:.15s;}
+  .dist-table th.sortable:hover{color:var(--text);}
+  .dist-table th.sortable.active{color:var(--accent);}
+  .dist-table .sort-ind{display:inline-block;width:0;height:0;margin-left:4px;vertical-align:middle;
+        border-left:4px solid transparent;border-right:4px solid transparent;}
+  .dist-table .sort-ind.asc{border-bottom:5px solid var(--accent);}
+  .dist-table .sort-ind.desc{border-top:5px solid var(--accent);}
   .dist-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text);}
   .dist-table td.num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;}
   .dist-table tr:last-child td{border-bottom:none;}
   @media(max-width:1100px){ .layout{grid-template-columns:1fr;} #map{height:420px;height:60vh;position:sticky;top:20px;} .mapSide{position:static;} .modal-hero img{height:240px;} }
+  @media(max-width:767px){ .filterbar{position:static;} }
   @media(max-width:520px){ h1{font-size:19px;}.modal-title .addr{font-size:18px;}.modal-title .town{font-size:13px;} }
   </style>
 </head>
@@ -232,7 +240,7 @@
         <div class="dist-title">Ride distance from this home</div>
         <table class="dist-table">
           <thead>
-            <tr><th>Destination</th><th class="num">Distance</th><th class="num">Drive time</th></tr>
+            <tr><th>Destination</th><th class="num sortable" data-col="distance" title="Sort by distance">Distance<span class="sort-ind"></span></th><th class="num sortable" data-col="time" title="Sort by drive time">Drive time<span class="sort-ind"></span></th></tr>
           </thead>
           <tbody id="mDistBody"></tbody>
         </table>
@@ -426,9 +434,9 @@ const statCount = document.getElementById("statCount");
 
 /* ---------- Leaflet map ---------- */
 const map = L.map("map", {scrollWheelZoom:true}).setView([35.43,-82.55], 10);
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
-  maxZoom:20, subdomains:"abcd",
-  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
+  maxZoom:17, subdomains:"abc",
+  attribution:'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
 }).addTo(map);
 
 const TOWN_COLOR = {
@@ -541,24 +549,70 @@ function showMarkers(list, isAll){
 const overlay = document.getElementById("overlay");
 function buildModalMap(){
   const m = L.map("modalMap", {scrollWheelZoom:true});
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
-    maxZoom:20, subdomains:"abcd",
-    attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
+    maxZoom:17, subdomains:"abc",
+    attribution:'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
   }).addTo(m);
   return m;
 }
 let modalMap = null, modalMarker = null;
+let distSort = { col:null, dir:1 };   // col: 'distance'|'time'|null, dir: 1 asc, -1 desc
 function renderDistances(h){
-  const rows = DIST[h.addr] || [];
+  const rows = (DIST[h.addr] || []).map((d,i)=>({ name:RIDE_DEST[i], dist:d[0], time:d[1] }));
+  if(distSort.col){
+    rows.sort((a,b)=>{
+      const k = distSort.col==="time" ? a.time : a.dist;
+      const l = distSort.col==="time" ? b.time : b.dist;
+      return (k-l)*distSort.dir;
+    });
+  }
   const body = document.getElementById("mDistBody");
-  body.innerHTML = RIDE_DEST.map((name, i)=>{
-    const d = rows[i];
-    if(!d) return `<tr><td>${name}</td><td class="num">—</td><td class="num">—</td></tr>`;
-    const min = d[1]<60 ? `${d[1]} min` : `${Math.floor(d[1]/60)}h ${d[1]%60}m`;
-    return `<tr><td>${name}</td><td class="num">${d[0]} mi</td><td class="num">${min}</td></tr>`;
+  body.innerHTML = rows.map(r=>{
+    if(r.dist==null) return `<tr><td>${r.name}</td><td class="num">—</td><td class="num">—</td></tr>`;
+    const min = r.time<60 ? `${r.time} min` : `${Math.floor(r.time/60)}h ${r.time%60}m`;
+    return `<tr><td>${r.name}</td><td class="num">${r.dist} mi</td><td class="num">${min}</td></tr>`;
   }).join("");
+  // update header indicators
+  document.querySelectorAll(".dist-table th.sortable").forEach(th=>{
+    const active = th.dataset.col === distSort.col;
+    th.classList.toggle("active", active);
+    const ind = th.querySelector(".sort-ind");
+    ind.className = "sort-ind" + (active ? (distSort.dir>0 ? " asc" : " desc") : "");
+  });
+}
+let currentDistHome = null;
+document.querySelector(".dist-table thead").addEventListener("click", e=>{
+  const th = e.target.closest("th.sortable");
+  if(!th) return;
+  const col = th.dataset.col;
+  if(distSort.col === col) distSort.dir *= -1;
+  else { distSort.col = col; distSort.dir = 1; }
+  if(currentDistHome) renderDistances(currentDistHome);
+});
+
+/* Deep-linkable listing modal: the current home is encoded as ?id=<slug>
+   in the URL so a specific listing's modal can be shared/restored. */
+const homeId = h => h.addr.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+function findHomeById(id){
+  if(!id) return null;
+  const target = id.toLowerCase();
+  return HOMES.find(h => homeId(h) === target) || null;
+}
+function setUrlId(h){
+  const url = new URL(location.href);
+  url.searchParams.set("id", homeId(h));
+  history.replaceState(null, "", url);
+}
+function clearUrlId(){
+  const url = new URL(location.href);
+  if(!url.searchParams.has("id")) return;
+  url.searchParams.delete("id");
+  history.replaceState(null, "", url);
 }
 function openModal(h){
+  setUrlId(h);
+  currentDistHome = h;
+  distSort = { col:null, dir:1 };
   document.getElementById("mImg").src = h.img;
   document.getElementById("mImg").alt = fullAddr(h);
   document.getElementById("mAddr").textContent = fullAddr(h);
@@ -579,6 +633,7 @@ function openModal(h){
   setTimeout(()=>modalMap.invalidateSize(), 50);
 }
 function closeModal(){
+  clearUrlId();
   overlay.classList.remove("open");
   document.body.style.overflow = "";
 }
@@ -778,6 +833,13 @@ document.getElementById("sortSel").addEventListener("change", e=>{
 });
 
 render("All");
+
+/* Restore a deep-linked listing's modal from the ?id= slug, if present. */
+const deepLinkId = new URLSearchParams(location.search).get("id");
+if(deepLinkId){
+  const linked = findHomeById(deepLinkId);
+  if(linked) openModal(linked);
+}
 </script>
 </body>
 </html>
